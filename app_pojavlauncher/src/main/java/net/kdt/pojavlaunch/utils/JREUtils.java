@@ -54,11 +54,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
+
+import top.fifthlight.touchcontroller.proxy.client.LauncherSocketProxyClient;
+import top.fifthlight.touchcontroller.proxy.client.LauncherSocketProxyClientKt;
 
 public class JREUtils {
     private JREUtils() {
@@ -454,7 +458,23 @@ public class JREUtils {
         }
     }
 
+    public static LauncherSocketProxyClient touchControllerProxy;
+    public static int touchControllerProxyPort = -1;
+
     public static int launchJavaVM(final Activity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
+        if (touchControllerProxy == null) {
+            touchControllerProxyPort = ThreadLocalRandom.current().nextInt(32768) + 32768;
+            touchControllerProxy = LauncherSocketProxyClientKt.localhostLauncherSocketProxyClient(touchControllerProxyPort);
+            Log.d("LauncherSocketProxy", "Created on port " + touchControllerProxyPort);
+            new Thread(() -> {
+                Log.d("LauncherSocketProxy", "Listening on port " + touchControllerProxyPort);
+                LauncherSocketProxyClientKt.runProxy(touchControllerProxy);
+                Log.d("LauncherSocketProxy", "Stopped");
+            }).start();
+        }
+        if (touchControllerProxyPort > 0) {
+            Os.setenv("TOUCH_CONTROLLER_PROXY", String.valueOf(touchControllerProxyPort), true);
+        }
         String runtimeHome = MultiRTUtils.getRuntimeHome(runtime.name).getAbsolutePath();
 
         JREUtils.relocateLibPath(runtime, runtimeHome);
