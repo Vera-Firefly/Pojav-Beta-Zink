@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application' version '7.4.2'
+    id 'com.android.application' version '8.7.3'
 }
 
 static def getDate() { return new Date().format('yyyyMMdd') }
@@ -130,7 +130,7 @@ android {
     defaultConfig {
         applicationId "net.kdt.pojavlaunch.firefly"
         minSdkVersion 24
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode getDateSeconds()
         versionName getVersionName()
         multiDexEnabled true //important
