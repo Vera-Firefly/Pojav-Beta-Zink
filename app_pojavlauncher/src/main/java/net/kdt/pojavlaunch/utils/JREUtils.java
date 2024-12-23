@@ -266,6 +266,11 @@ public class JREUtils {
             envMap.put("POJAVEXEC_EGL", "libltw.so");
         }
 
+        if (LOCAL_RENDERER.equals("opengles3_angle")) {
+            envMap.put("LIBGL_ES", "3");
+            envMap.put("POJAVEXEC_EGL", "libEGL_angle.so");
+        }
+
         if (!LOCAL_RENDERER.startsWith("opengles")) {
             envMap.put("MESA_GLSL_CACHE_DIR", Tools.DIR_CACHE.getAbsolutePath());
             envMap.put("force_glsl_extensions_warn", "true");
@@ -688,6 +693,9 @@ public class JREUtils {
                     break;
                 case "panfrost":
                     renderLibrary = "libOSMesa_2300d.so";
+                    break;
+                case "opengles3_angle":
+                    renderLibrary = "libAngle.so";
                     break;
                 case "opengles3_ltw":
                     renderLibrary = "libltw.so";
