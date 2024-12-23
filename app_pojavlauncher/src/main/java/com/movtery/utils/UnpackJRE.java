@@ -28,7 +28,7 @@ public class UnpackJRE {
         String launcherRuntimeVersion;
         String installedRuntimeVersion = MultiRTUtils.readInternalRuntimeVersion(internalRuntime.name);
         try {
-            launcherRuntimeVersion = Tools.read(assetManager.open(internalRuntime.path + "/version"));
+            launcherRuntimeVersion = Tools.read(assetManager.open(internalRuntime.path + "/pojav_version"));
         } catch (IOException exc) {
             return;
         }
