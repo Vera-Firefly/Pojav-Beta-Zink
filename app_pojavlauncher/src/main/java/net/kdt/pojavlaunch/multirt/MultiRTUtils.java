@@ -103,7 +103,7 @@ public class MultiRTUtils {
 
         unpack200(NATIVE_LIB_DIR, RUNTIME_FOLDER + "/" + name);
 
-        File binpack_verfile = new File(RUNTIME_FOLDER, "/" + name + "/pojav_version");
+        File binpack_verfile = new File(RUNTIME_FOLDER, "/" + name + "/version");
         FileOutputStream fos = new FileOutputStream(binpack_verfile);
         fos.write(binpackVersion.getBytes());
         fos.close();
@@ -115,7 +115,7 @@ public class MultiRTUtils {
 
 
     public static String readInternalRuntimeVersion(String name) {
-        File versionFile = new File(RUNTIME_FOLDER, "/" + name + "/pojav_version");
+        File versionFile = new File(RUNTIME_FOLDER, "/" + name + "/version");
         try {
             if (versionFile.exists()) {
                 return Tools.read(versionFile.getAbsolutePath());
