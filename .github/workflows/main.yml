@@ -20,6 +20,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Set IS_OFFICIAL if in the Creator Repository
         if: github.repository_owner == 'Vera-Firefly'
         run: echo "IS_OFFICIAL=true" >> $GITHUB_ENV
@@ -92,6 +98,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Set IS_OFFICIAL if in the Creator Repository
         if: github.repository_owner == 'Vera-Firefly'
