@@ -1401,6 +1401,13 @@ public final class Tools {
                     if (driverModel.contains("llvmpipe")) continue;
                 }
                 break;
+                case "mesa2121": {
+                    if (driverModel.contains("panfrost")) continue;
+                    if (driverModel.contains("freedreno")) continue;
+                    if (driverModel.contains("softpipe")) continue;
+                    if (driverModel.contains("llvmpipe")) continue;
+                }
+                break;
             }
             CDriverModelIds.add(driverModel);
             CDriverModelNames.add(defaultCDriverModelNames[i]);

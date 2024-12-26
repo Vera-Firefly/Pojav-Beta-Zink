@@ -666,6 +666,9 @@ public class JREUtils {
                 case "mesa2205":
                     renderLibrary = "libOSMesa_2205.so";
                     break;
+                case "mesa2121":
+                    renderLibrary = "libOSMesa_2121.so";
+                    break;
                 default:
                     renderLibrary = MesaUtils.INSTANCE.getMesaLib(MESA_LIBS);
                     break;
@@ -689,7 +692,7 @@ public class JREUtils {
                     renderLibrary = "libOSMesa_2304.so";
                     break;
                 case "virglrenderer":
-                    renderLibrary = "libOSMesa_2205.so";
+                    renderLibrary = "libOSMesa_2121.so";
                     break;
                 case "panfrost":
                     renderLibrary = "libOSMesa_2300d.so";
