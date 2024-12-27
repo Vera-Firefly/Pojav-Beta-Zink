@@ -16,19 +16,11 @@
 #include "osmesa_loader.h"
 #include "renderer_config.h"
 
-static struct virgl_render_window_t *virgl_bridge;
-static char virgl_no_render_buffer[4];
-static bool hasSetNoRendererBuffer = false;
-
 int (*vtest_main_p)(int argc, char **argv);
 void (*vtest_swap_buffers_p)(void);
 void *gbuffer;
 
-void virgl_set_no_render_buffer(ANativeWindow_Buffer* buf) {
-    buf->bits = &virgl_no_render_buffer;
-    buf->width = pojav_environ->savedWidth;
-    buf->height = pojav_environ->savedHeight;
-}
+static OSMesaContext virgl_context;
 
 void *egl_make_current(void *window) {
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
@@ -78,16 +70,6 @@ int virglInit() {
     if (pojav_environ->config_renderer != RENDERER_VIRGL)
         return 0;
 
-    virgl_bridge = malloc(sizeof(struct virgl_render_window_t));
-    if (!virgl_bridge)
-    {
-        printf("[ VirGL Bridge ] Failed to allocate memory for virgl_bridge\n");
-        return -1;
-    }
-    memset(virgl_bridge, 0, sizeof(struct virgl_render_window_t));
-
-    virgl_bridge->nativeSurface = pojav_environ->pojavWindow;
-
     if (potatoBridge.eglDisplay == NULL || potatoBridge.eglDisplay == EGL_NO_DISPLAY)
     {
         potatoBridge.eglDisplay = eglGetDisplay_p(EGL_DEFAULT_DISPLAY);
@@ -134,11 +116,11 @@ int virglInit() {
         return 0;
     }
 
-    ANativeWindow_setBuffersGeometry(virgl_bridge->nativeSurface, 0, 0, vid);
+    ANativeWindow_setBuffersGeometry(pojav_environ->pojavWindow, 0, 0, vid);
 
     eglBindAPI_p(EGL_OPENGL_ES_API);
 
-    potatoBridge.eglSurface = eglCreateWindowSurface_p(potatoBridge.eglDisplay, config, virgl_bridge->nativeSurface, NULL);
+    potatoBridge.eglSurface = eglCreateWindowSurface_p(potatoBridge.eglDisplay, config, pojav_environ->pojavWindow, NULL);
 
     if (!potatoBridge.eglSurface)
     {
@@ -207,38 +189,35 @@ void *virglCreateContext(void *contextSrc) {
         return NULL;
     }
 
-    virgl_bridge->context = context;
+    virgl_context = context;
     printf("[ VirGL Bridge ] context = %p\n", context);
 
     return context;
 }
 
 void *virglGetCurrentContext() {
-    return virgl_bridge->context;
+    return virgl_context;
 }
 
-void virgl_apply_current(ANativeWindow_Buffer* buf) {
-    OSMesaMakeCurrent_p(virgl_bridge->context, buf->bits, GL_UNSIGNED_BYTE, buf->width, buf->height);
-}
+static bool onMakeCurrent = false;
 
 void virglMakeCurrent(void *window) {
-    if (!hasSetNoRendererBuffer) {
+    if (!onMakeCurrent)
         printf("OSMDroid: making current\n");
-        virgl_set_no_render_buffer(&virgl_bridge->buffer);
-    }
 
-    virgl_apply_current(&virgl_bridge->buffer);
+    OSMesaMakeCurrent_p(virgl_context, setbuffer, GL_UNSIGNED_BYTE, pojav_environ->savedWidth, pojav_environ->savedHeight);
 
-    if (!hasSetNoRendererBuffer)
+    glClear_p(GL_COLOR_BUFFER_BIT);
+    glClearColor_p(0.4f, 0.4f, 0.4f, 1.0f);
+
+    int pixelsArr[4];
+    glReadPixels_p(0, 0, 1, 1, GL_RGB, GL_INT, &pixelsArr);
+
+    if (!onMakeCurrent)
     {
-        hasSetNoRendererBuffer = true;
+        onMakeCurrent = true;
         printf("OSMDroid: vendor: %s\n",glGetString_p(GL_VENDOR));
         printf("OSMDroid: renderer: %s\n",glGetString_p(GL_RENDERER));
-        glClear_p(GL_COLOR_BUFFER_BIT);
-        glClearColor_p(0.4f, 0.4f, 0.4f, 1.0f);
-
-        int pixelsArr[4];
-        glReadPixels_p(0, 0, 1, 1, GL_RGB, GL_INT, &pixelsArr);
 
         virglSwapBuffers();
     }
