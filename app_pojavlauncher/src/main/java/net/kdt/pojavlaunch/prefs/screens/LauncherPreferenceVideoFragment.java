@@ -366,7 +366,10 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         mMesaGLSLVersion = view.findViewById(R.id.mesa_glsl_version);
 
         mMesaGLVersion.setText(LauncherPreferences.PREF_MESA_GL_VERSION);
+        mMesaGLVersion.setHint("X.X");
+
         mMesaGLSLVersion.setText(LauncherPreferences.PREF_MESA_GLSL_VERSION);
+        mMesaGLSLVersion.setHint("XX0");
 
         new CustomDialog.Builder(getContext())
                 .setCustomView(view)
@@ -375,8 +378,8 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
                     String glVersion = mMesaGLVersion.getText().toString();
                     String glslVersion = mMesaGLSLVersion.getText().toString();
 
-                    boolean validGLVersion = isValidVersion(glVersion, "2.8", "4.6");
-                    boolean validGLSLVersion = isValidVersion(glslVersion, "280", "460");
+                    boolean validGLVersion = isValidVersion(glVersion, "2.8", "4.6") && glVersion.matches("[234]\\.(\\d)");
+                    boolean validGLSLVersion = isValidVersion(glslVersion, "280", "460") && glslVersion.matches("[234](\\d)0");
 
                     if (!validGLVersion || !validGLSLVersion) {
                         if (!validGLVersion) {
