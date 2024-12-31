@@ -25,6 +25,7 @@ public class ChooseTurnipListPref extends ListPreference {
     private List<String> defaultLibs;
     private OnPreferenceChangeListener preferenceChangeListener;
     private View.OnClickListener importButtonListener;
+    private View.OnClickListener downloadClickListener;
 
     public ChooseTurnipListPref(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -63,8 +64,12 @@ public class ChooseTurnipListPref extends ListPreference {
         Button importButton = new Button(getContext());
         importButton.setText(R.string.pgw_settings_custom_turnip_creat);
 
+        Button downloadButton = new Button(getContext());
+        downloadButton.setText(R.string.pgw_settings_ctu_download);
+
         LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
         buttonLayout.addView(importButton, buttonParams);
+        buttonLayout.addView(downloadButton, buttonParams);
 
         mainLayout.addView(buttonLayout);
 
@@ -76,6 +81,13 @@ public class ChooseTurnipListPref extends ListPreference {
         importButton.setOnClickListener(v -> {
             if (importButtonListener != null) {
                 importButtonListener.onClick(v);
+            }
+            dialog.dismiss();
+        });
+
+        downloadButton.setOnClickListener(v -> {
+            if (downloadClickListener != null) {
+                downloadClickListener.onClick(v);
             }
             dialog.dismiss();
         });
@@ -114,6 +126,10 @@ public class ChooseTurnipListPref extends ListPreference {
 
     public void setImportButton(String buttonText, View.OnClickListener listener) {
         this.importButtonListener = listener;
+    }
+
+    public void setDownloadButton(String buttonText, View.OnClickListener listener) {
+        this.downloadClickListener = listener;
     }
 
     private void showDeleteConfirmationDialog(String version) {

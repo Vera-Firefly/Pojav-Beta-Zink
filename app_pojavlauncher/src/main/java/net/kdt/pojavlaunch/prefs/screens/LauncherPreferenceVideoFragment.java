@@ -22,6 +22,7 @@ import androidx.preference.SwitchPreferenceCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 
+import com.firefly.feature.TurnipDownloader;
 import com.firefly.utils.MesaUtils;
 import com.firefly.utils.PGWTools;
 import com.firefly.utils.TurnipUtils;
@@ -144,6 +145,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
             return true;
         });
         CTurnipP.setImportButton(getString(R.string.pgw_settings_custom_turnip_creat), view -> handleFileSelection("ADD_TURNIP"));
+        CTurnipP.setDownloadButton(getString(R.string.pgw_settings_ctu_download), view -> loadTurnipList());
 
         CDriverModelP.setOnPreferenceChangeListener((pre, obj) -> {
             Tools.DRIVER_MODEL = (String) obj;
@@ -488,6 +490,67 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
                 } else {
                     AlertDialog alertDialog1 = new AlertDialog.Builder(requireActivity())
                             .setMessage(R.string.preference_rendererexp_mesa_download_fail)
+                            .create();
+                    alertDialog1.show();
+                }
+            });
+        });
+    }
+
+    private void loadTurnipList() {
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setMessage(R.string.pgw_settings_ctu_dl_load)
+                .show();
+        PojavApplication.sExecutorService.execute(() -> {
+            Set<String> list = TurnipDownloader.getTurnipList(requireContext());
+            requireActivity().runOnUiThread(() -> {
+                dialog.dismiss();
+
+                if (list == null) {
+                    AlertDialog alertDialog1 = new AlertDialog.Builder(requireActivity())
+                            .setMessage(R.string.pgw_settings_ctu_dl_loadfail)
+                            .create();
+                    alertDialog1.show();
+                } else {
+                    final String[] items = new String[list.size()];
+                    list.toArray(items);
+                    AlertDialog alertDialog2 = new AlertDialog.Builder(requireActivity())
+                            .setTitle(R.string.pgw_settings_ctu_dl_ms)
+                            .setItems(items, (dialogInterface, i) -> {
+                                if (i < 0 || i >= items.length)
+                                    return;
+                                dialogInterface.dismiss();
+                                downloadTurnip(items[i]);
+                            })
+                            .create();
+                    alertDialog2.show();
+                }
+            });
+        });
+    }
+
+    private void downloadTurnip(String version) {
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setMessage(R.string.pgw_settings_ctu_dl_downloading)
+                .setCancelable(false)
+                .show();
+        PojavApplication.sExecutorService.execute(() -> {
+            boolean data = TurnipDownloader.downloadTurnipFile(requireContext(), version);
+            requireActivity().runOnUiThread(() -> {
+                dialog.dismiss();
+                if (data) {
+                    boolean success = TurnipDownloader.saveTurnipFile(requireContext(), version);
+                    if (success) {
+                        Toast.makeText(requireContext(), R.string.pgw_settings_ctu_saved, Toast.LENGTH_SHORT)
+                                .show();
+                        setListPreference(requirePreference("chooseTurnipDriver", ChooseTurnipListPref.class), "chooseTurnipDriver");
+                    } else {
+                        Toast.makeText(requireContext(), R.string.pgw_settings_ctu_save_fail, Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                } else {
+                    AlertDialog alertDialog1 = new AlertDialog.Builder(requireActivity())
+                            .setMessage(R.string.pgw_settings_ctu_dl_failed)
                             .create();
                     alertDialog1.show();
                 }

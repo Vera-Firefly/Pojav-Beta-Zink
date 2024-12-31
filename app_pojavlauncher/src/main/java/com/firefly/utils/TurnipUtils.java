@@ -28,6 +28,10 @@ public class TurnipUtils {
         }
     }
 
+    public File getTurnipDir() {
+        return turnipDir;
+    }
+
     public List<String> getTurnipDriverList() {
         List<String> list = new ArrayList<>();
         File[] files = turnipDir.listFiles();
@@ -43,20 +47,13 @@ public class TurnipUtils {
         return Tools.TURNIP_DIR + "/" + version;
     }
 
-    /** 首先我们有考虑过在启动器内下载
-     * 但启动器内下载的不一定满足所有用户
-     * 经过慎重考虑,还是决定让用户自己选择,并非在启动器内下载
-     * 也许后面会出一个在启动器内下载的方法
-     * 但直觉告诉我,这将止步于此,启动器内下载要重新考虑方案
-     * 而且满足不了所有用户
-     */
     public boolean saveTurnipDriver(Context context, Uri fileUri, String folderName) {
         try (InputStream inputStream = context.getContentResolver().openInputStream(fileUri)) {
             if (inputStream == null || !PGWTools.isELFFile(inputStream)) {
                 return false;
             }
 
-            inputStream.close(); // Close an open validation file stream
+            inputStream.close();
             InputStream newInputStream = context.getContentResolver().openInputStream(fileUri);
 
             File targetDir = new File(turnipDir, folderName);
