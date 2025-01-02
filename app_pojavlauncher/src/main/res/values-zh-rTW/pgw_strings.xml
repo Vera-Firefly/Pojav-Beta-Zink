@@ -191,4 +191,6 @@
     <string name="pgw_settings_ctu_dl_failed">Turnip 驅動下載失敗</string>  
     <string name="pgw_settings_ctu_dl_downloading">正在下載 Turnip 驅動</string>
 
+    <string name="pgw_settings_choose_download_source">選擇下載源</string>
+
 </resources>

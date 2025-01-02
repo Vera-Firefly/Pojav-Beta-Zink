@@ -163,4 +163,6 @@
     <string name="pgw_settings_ctu_dl_failed">Turnip Driver download fail</string>
     <string name="pgw_settings_ctu_dl_downloading">Downloading Turnip Driver</string>
 
+    <string name="pgw_settings_choose_download_source">Choose Download Source</string>
+
 </resources>

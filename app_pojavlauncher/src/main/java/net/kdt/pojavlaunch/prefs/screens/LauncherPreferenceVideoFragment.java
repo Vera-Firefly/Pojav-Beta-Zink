@@ -145,7 +145,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
             return true;
         });
         CTurnipP.setImportButton(getString(R.string.pgw_settings_custom_turnip_creat), view -> handleFileSelection("ADD_TURNIP"));
-        CTurnipP.setDownloadButton(getString(R.string.pgw_settings_ctu_download), view -> loadTurnipList());
+        CTurnipP.setDownloadButton(getString(R.string.pgw_settings_ctu_download), view -> isDownloadTurnip());
 
         CDriverModelP.setOnPreferenceChangeListener((pre, obj) -> {
             Tools.DRIVER_MODEL = (String) obj;
@@ -444,6 +444,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
     private void loadMesaList() {
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.preference_rendererexp_mesa_download_load)
+                .setCancelable(false)
                 .show();
         PojavApplication.sExecutorService.execute(() -> {
             Set<String> list = MesaUtils.INSTANCE.getMesaList();
@@ -497,12 +498,26 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         });
     }
 
-    private void loadTurnipList() {
+    private void isDownloadTurnip() {
+        new CustomDialog.Builder(requireContext())
+            .setTitle(getString(R.string.pgw_settings_choose_download_source))
+            .setCancelable(false)
+            .setItems(new String[]{"GitHub", "GHPROXY"}, selectedSource -> {
+                int dls = selectedSource.equals("GitHub") ? 1 : 2;
+                loadTurnipList(dls);
+            })
+            .setConfirmListener(R.string.alertdialog_cancel, customView -> true)
+            .build()
+            .show();
+    }
+
+    private void loadTurnipList(int dls) {
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.pgw_settings_ctu_dl_load)
+                .setCancelable(false)
                 .show();
         PojavApplication.sExecutorService.execute(() -> {
-            Set<String> list = TurnipDownloader.getTurnipList(requireContext());
+            Set<String> list = TurnipDownloader.getTurnipList(requireContext(), dls);
             requireActivity().runOnUiThread(() -> {
                 dialog.dismiss();
 
