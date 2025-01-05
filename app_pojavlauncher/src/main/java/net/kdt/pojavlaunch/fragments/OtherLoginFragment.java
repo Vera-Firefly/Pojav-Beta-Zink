@@ -105,7 +105,7 @@ public class OtherLoginFragment extends Fragment {
             CustomDialog dialog = new CustomDialog.Builder(requireContext())
                     .setTitle(getString(R.string.other_login_aut))
                     .setCancelable(false)
-                    .setItems(new String[]{getString(R.string.other_login_external), getString(R.string.other_login_pass)}, selectedSource -> {
+                    .setItems(new String[]{getString(R.string.other_login_external), getString(R.string.other_login_pass)}, (selectedSource, i) -> {
                         EditText editText = new EditText(requireContext());
                         editText.setMaxLines(1);
                         editText.setInputType(InputType.TYPE_CLASS_TEXT);

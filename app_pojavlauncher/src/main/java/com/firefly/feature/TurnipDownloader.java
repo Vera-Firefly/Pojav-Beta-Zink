@@ -29,6 +29,8 @@ public class TurnipDownloader {
     private static final Map<String, String> versionName = new HashMap<>();
     private static final Map<String, String> turnipName = new HashMap<>();
 
+    private static volatile boolean isCancelled = false;
+
     private static void initDownloadDir(Context context) {
         if (dir == null) {
             dir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "Turnip");
@@ -38,15 +40,39 @@ public class TurnipDownloader {
         }
     }
 
+    public static void cancelDownload(Context context) {
+        isCancelled = true;
+    }
+
     public static Set<String> getTurnipList(Context context, int dls) {
+        isCancelled = false;
         File tempFile = null;
         initDownloadDir(context);
-        DLS = (dls == 1 ? "https://" : "https://mirror.ghproxy.com/");
+
+        String defaultUrl = "https://";
+        String ghproxyUrl = "https://mirror.ghproxy.com/";
+        String versionUrl = null;
+
+        if (dls != 0) {
+            DLS = (dls == 1 ? defaultUrl : ghproxyUrl);
+            versionUrl = DLS + VERSION_JSON_URL;
+        } else {
+            String[] baseUrls = {defaultUrl, ghproxyUrl};
+            String testLink = defaultUrl + VERSION_JSON_URL;
+
+            for (String testUrl : baseUrls) {
+                String tempUrl = testUrl + VERSION_JSON_URL;
+                if (checkUrlAvailability(tempUrl)) {
+                    versionUrl = tempUrl;
+                    DLS = tempUrl.equals(testLink) ? defaultUrl : ghproxyUrl;
+                    break;
+                }
+            }
+        }
 
         try {
             tempFile = new File(dir, "version.json");
 
-            String versionUrl = DLS + VERSION_JSON_URL;
             URL url = new URL(versionUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -56,6 +82,11 @@ public class TurnipDownloader {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    if (isCancelled) {
+                        fileOutputStream.close();
+                        tempFile.delete();
+                        return null;
+                    }
                     fileOutputStream.write(buffer, 0, bytesRead);
                 }
             }
@@ -135,6 +166,11 @@ public class TurnipDownloader {
                     byte[] buffer = new byte[4096];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        if (isCancelled) {
+                            fileOutputStream.close();
+                            targetFile.delete();
+                            return false;
+                        }
                         fileOutputStream.write(buffer, 0, bytesRead);
                     }
                 }

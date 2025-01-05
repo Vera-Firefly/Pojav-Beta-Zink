@@ -158,7 +158,7 @@ public class UpdateLauncher {
         new CustomDialog.Builder(context)
             .setTitle(context.getString(R.string.pgw_settings_updatelauncher_source))
             .setCancelable(false)
-            .setItems(new String[]{"GitHub", "GHPROXY"}, selectedSource -> {
+            .setItems(new String[]{"GitHub", "GHPROXY"}, (selectedSource, i) -> {
                 String apkUrl = selectedSource.equals("GitHub") ?
                         "https://" + githubUrl :
                         "https://mirror.ghproxy.com/" + githubUrl;

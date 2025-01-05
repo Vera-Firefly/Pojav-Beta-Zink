@@ -1,5 +1,7 @@
 package com.firefly.ui.dialog;
 
+import androidx.annotation.Nullable;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -39,8 +41,9 @@ public class CustomDialog implements DraggableDialog.DialogInitializationListene
 
         TextView titleTextView = view.findViewById(R.id.custom_dialog_title);
         TextView messageTextView = view.findViewById(R.id.custom_dialog_message);
-        TextView scrollmessageTextView = view.findViewById(R.id.custom_dialog_scroll_message);
-        ScrollView customScrollView = view.findViewById(R.id.custom_scroll_view);
+        TextView scrollmessageTextView = view.findViewById(R.id.custom_dialog_scroll_message_text);
+        ScrollView messageScrollView = view.findViewById(R.id.message_scroll_view);
+        // ScrollView listScrollView = view.findViewById(R.id.list_scroll_view);
         Button button1 = view.findViewById(R.id.custom_dialog_button_1);
         Button button2 = view.findViewById(R.id.custom_dialog_button_2);
         Button button3 = view.findViewById(R.id.custom_dialog_button_3);
@@ -63,7 +66,7 @@ public class CustomDialog implements DraggableDialog.DialogInitializationListene
         if (scrollmessage != null && !scrollmessage.isEmpty()) {
             scrollmessageTextView.setText(scrollmessage);
             scrollmessageTextView.setVisibility(View.VISIBLE);
-            customScrollView.setVisibility(View.VISIBLE);
+            messageScrollView.setVisibility(View.VISIBLE);
         }
 
         if (customView != null && customContainer != null) {
@@ -73,6 +76,7 @@ public class CustomDialog implements DraggableDialog.DialogInitializationListene
 
         if (items != null && items.length > 0) {
             listView.setVisibility(View.VISIBLE);
+            // listScrollView.setVisibility(View.VISIBLE);
         }
 
         if (confirmButtonText != null) confirmButton.setText(confirmButtonText);
@@ -139,7 +143,8 @@ public class CustomDialog implements DraggableDialog.DialogInitializationListene
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener((parent, view1, position, id) -> {
-                itemClickListener.onItemClick(items[position]);
+                String item = items[position];
+                itemClickListener.onItemClick(item, position);
                 dialog.dismiss();
             });
         }
@@ -147,6 +152,12 @@ public class CustomDialog implements DraggableDialog.DialogInitializationListene
 
     public void show() {
         dialog.show();
+    }
+
+    public void dismiss() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 
     @Override
@@ -167,7 +178,7 @@ public class CustomDialog implements DraggableDialog.DialogInitializationListene
     }
 
     public interface OnItemClickListener {
-        void onItemClick(String item);
+        void onItemClick(String item, @Nullable Integer index);
     }
 
     public static class Builder {
