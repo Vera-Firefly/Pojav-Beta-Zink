@@ -11,8 +11,10 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -48,7 +50,7 @@ public class TurnipDownloader {
         return isCancelled;
     }
 
-    public static Set<String> getTurnipList(Context context, int dls) {
+    public static List<String> getTurnipList(Context context, int dls) {
         isCancelled = false;
         File tempFile = null;
         initDownloadDir(context);
@@ -106,7 +108,7 @@ public class TurnipDownloader {
             JSONObject jsonObject = new JSONObject(response.toString());
             JSONArray versions = jsonObject.getJSONArray("versions");
 
-            Set<String> versionSet = new HashSet<>();
+            List<String> versionList = new ArrayList<>();
             versionName.clear();
             turnipName.clear();
             for (int i = 0; i < versions.length(); i++) {
@@ -116,10 +118,10 @@ public class TurnipDownloader {
                 String fileName = versionObject.getString("fileName");
                 versionName.put(version, tag);
                 turnipName.put(tag, fileName);
-                versionSet.add(version);
+                versionList.add(version);
             }
 
-            return versionSet;
+            return versionList;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

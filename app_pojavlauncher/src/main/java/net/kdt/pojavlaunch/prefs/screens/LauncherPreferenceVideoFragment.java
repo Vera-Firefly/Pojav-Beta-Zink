@@ -45,6 +45,8 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.prefs.CustomSeekBarPreference;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -522,7 +524,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
                 .build();
         dialog.show();
         PojavApplication.sExecutorService.execute(() -> {
-            Set<String> list = TurnipDownloader.getTurnipList(requireContext(), dls);
+            List<String> list = TurnipDownloader.getTurnipList(requireContext(), dls);
             boolean isCancelled = TurnipDownloader.onCancelled(requireContext());
             if (isCancelled) return;
             requireActivity().runOnUiThread(() -> {
@@ -535,8 +537,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
                             .build();
                     Dialog1.show();
                 } else {
-                    final String[] items = new String[list.size()];
-                    list.toArray(items);
+                    final String[] items = list.toArray(new String[0]);
                     ListViewDialog Dialog2 = new ListViewDialog.Builder(requireActivity())
                             .setTitle(R.string.pgw_settings_ctu_dl_ms)
                             .setItems(items, (item, i) -> {
