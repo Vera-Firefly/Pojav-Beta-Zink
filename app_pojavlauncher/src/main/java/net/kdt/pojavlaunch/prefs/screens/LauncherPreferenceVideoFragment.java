@@ -523,6 +523,8 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         dialog.show();
         PojavApplication.sExecutorService.execute(() -> {
             Set<String> list = TurnipDownloader.getTurnipList(requireContext(), dls);
+            boolean isCancelled = TurnipDownloader.onCancelled(requireContext());
+            if (isCancelled) return;
             requireActivity().runOnUiThread(() -> {
                 dialog.dismiss();
 
@@ -562,6 +564,8 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         dialog.show();
         PojavApplication.sExecutorService.execute(() -> {
             boolean data = TurnipDownloader.downloadTurnipFile(requireContext(), version);
+            boolean isCancelled = TurnipDownloader.onCancelled(requireContext());
+            if (isCancelled) return;
             requireActivity().runOnUiThread(() -> {
                 dialog.dismiss();
                 if (data) {

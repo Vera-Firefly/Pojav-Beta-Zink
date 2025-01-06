@@ -44,6 +44,10 @@ public class TurnipDownloader {
         isCancelled = true;
     }
 
+    public static boolean onCancelled(Context context) {
+        return isCancelled;
+    }
+
     public static Set<String> getTurnipList(Context context, int dls) {
         isCancelled = false;
         File tempFile = null;
