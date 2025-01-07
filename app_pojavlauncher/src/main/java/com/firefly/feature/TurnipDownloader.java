@@ -127,7 +127,7 @@ public class TurnipDownloader {
             return false;
         }
 
-        return true
+        return true;
     }
 
     // Save the extracted file
