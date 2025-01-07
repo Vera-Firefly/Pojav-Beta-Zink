@@ -127,8 +127,7 @@ public class TurnipDownloader {
             return false;
         }
 
-        cleanup(zipFile); // Clean up the zip file after extraction
-        return true;
+        return true
     }
 
     // Save the extracted file
@@ -230,11 +229,13 @@ public class TurnipDownloader {
                 }
                 zipInputStream.closeEntry();
             }
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        } finally {
+            cleanup(zipFile);
         }
+        return true;
     }
 
     // Check if a URL is valid
@@ -265,13 +266,14 @@ public class TurnipDownloader {
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
             }
-            File sourceFiles = getDownloadSubDir(folderName);
-            cleanup(sourceFiles);
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        } finally {
+            File sourceFiles = getDownloadSubDir(folderName);
+            cleanup(sourceFiles);
         }
+        return true;
     }
 
     // Helper methods
