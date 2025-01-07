@@ -523,8 +523,9 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
                 })
                 .build();
         dialog.show();
+        TurnipDownloader.initialize(requireContext());
         PojavApplication.sExecutorService.execute(() -> {
-            List<String> list = TurnipDownloader.getTurnipList(requireContext(), dls);
+            List<String> list = TurnipDownloader.getTurnipList(dls);
             boolean isCancelled = TurnipDownloader.isDownloadCancelled();
             if (isCancelled) return;
             requireActivity().runOnUiThread(() -> {
@@ -562,15 +563,16 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
                     return true;
                 })
                 .build();
-        dialog.show();
+        dialog.show();    
+        TurnipDownloader.initialize(requireContext());
         PojavApplication.sExecutorService.execute(() -> {
-            boolean data = TurnipDownloader.downloadTurnipFile(requireContext(), version);
+            boolean data = TurnipDownloader.downloadTurnipFile(version);
             boolean isCancelled = TurnipDownloader.isDownloadCancelled();
             if (isCancelled) return;
             requireActivity().runOnUiThread(() -> {
                 dialog.dismiss();
                 if (data) {
-                    boolean success = TurnipDownloader.saveTurnipFile(requireContext(), version);
+                    boolean success = TurnipDownloader.saveTurnipFile(version);
                     if (success) {
                         Toast.makeText(requireContext(), R.string.pgw_settings_ctu_saved, Toast.LENGTH_SHORT)
                                 .show();
