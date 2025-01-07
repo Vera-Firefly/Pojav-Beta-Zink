@@ -3,6 +3,7 @@ package com.firefly.feature;
 import android.content.Context;
 import android.os.Environment;
 
+import com.firefly.utils.PGWTools;
 import com.firefly.utils.TurnipUtils;
 
 import org.json.JSONArray;
@@ -25,7 +26,6 @@ public class TurnipDownloader {
     private static File downloadDir;
     private static final Map<String, String> versionNameMap = new HashMap<>();
     private static final Map<String, String> turnipNameMap = new HashMap<>();
-    private static volatile boolean isCancelled = false;
     private static Context appContext;
 
     // Initialize the downloader
@@ -45,16 +45,16 @@ public class TurnipDownloader {
     }
 
     public static void cancelDownload() {
-        isCancelled = true;
+        PGWTools.onCancel();
     }
 
     public static boolean isDownloadCancelled() {
-        return isCancelled;
+        return PGWTools.onCancelled();
     }
 
     // Get the list of Turnip versions
     public static List<String> getTurnipList(int sourceType) {
-        isCancelled = false;
+        PGWTools.initCancel();
         String versionUrl = resolveVersionUrl(sourceType);
 
         if (versionUrl == null) {
@@ -63,7 +63,7 @@ public class TurnipDownloader {
         }
 
         File versionFile = getDownloadSubDir("version.json");
-        if (!downloadFile(versionUrl, versionFile)) {
+        if (!PGWTools.downloadFile(versionUrl, versionFile)) {
             return null;
         }
 
@@ -97,7 +97,7 @@ public class TurnipDownloader {
             e.printStackTrace();
             return null;
         } finally {
-            cleanup(versionFile);
+            PGWTools.cleanupFile(versionFile);
         }
         return turnipVersions;
     }
@@ -117,12 +117,12 @@ public class TurnipDownloader {
         }
 
         File zipFile = getDownloadSubDir(version + ".zip");
-        if (!downloadFile(fileUrl, zipFile)) {
+        if (!PGWTools.downloadFile(fileUrl, zipFile)) {
             return false;
         }
 
         File extractDir = getDownloadSubDir(version);
-        if (!unzipFile(zipFile, extractDir)) {
+        if (!PGWTools.unzipFile(zipFile, extractDir)) {
             System.err.println("Failed to extract the file: " + zipFile.getAbsolutePath());
             return false;
         }
@@ -155,7 +155,7 @@ public class TurnipDownloader {
         }
         for (String source : sources) {
             String testUrl = source + BASE_URL + VERSION_JSON_PATH;
-            if (checkUrlAvailability(testUrl)) {
+            if (PGWTools.checkUrlAvailability(testUrl)) {
                 DLS = source;
                 return testUrl;
             }
@@ -171,85 +171,11 @@ public class TurnipDownloader {
         };
         for (String baseUrl : baseUrls) {
             String testUrl = String.format(DOWNLOAD_URL_TEMPLATE, baseUrl, tag, version);
-            if (checkUrlAvailability(testUrl)) {
+            if (PGWTools.checkUrlAvailability(testUrl)) {
                 return testUrl;
             }
         }
         return null;
-    }
-
-    // Generic file download method
-    private static boolean downloadFile(String fileUrl, File targetFile) {
-        try (InputStream inputStream = new URL(fileUrl).openStream();
-             FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                if (isCancelled) {
-                    cleanup(targetFile);
-                    return false;
-                }
-                fileOutputStream.write(buffer, 0, bytesRead);
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // Unzip the file
-    private static boolean unzipFile(File zipFile, File targetDir) {
-        if (!zipFile.exists() || !zipFile.isFile()) {
-            System.err.println("Invalid ZIP file: " + zipFile.getAbsolutePath());
-            return false;
-        }
-
-        if (!targetDir.exists() && !targetDir.mkdirs()) {
-            System.err.println("Failed to create extraction target directory: " + targetDir.getAbsolutePath());
-            return false;
-        }
-
-        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFile))) {
-            ZipEntry entry;
-            while ((entry = zipInputStream.getNextEntry()) != null) {
-                File outFile = new File(targetDir, entry.getName());
-                if (entry.isDirectory()) {
-                    if (!outFile.mkdirs() && !outFile.isDirectory()) {
-                        throw new IOException("Failed to create directory: " + outFile.getAbsolutePath());
-                    }
-                } else {
-                    try (FileOutputStream fileOutputStream = new FileOutputStream(outFile)) {
-                        byte[] buffer = new byte[4096];
-                        int len;
-                        while ((len = zipInputStream.read(buffer)) > 0) {
-                            fileOutputStream.write(buffer, 0, len);
-                        }
-                    }
-                }
-                zipInputStream.closeEntry();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            cleanup(zipFile);
-        }
-        return true;
-    }
-
-    // Check if a URL is valid
-    private static boolean checkUrlAvailability(String urlString) {
-        try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(urlString).openConnection();
-            connection.setRequestMethod("HEAD");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-            return connection.getResponseCode() >= 200 && connection.getResponseCode() < 400;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     // Copy file to the target directory
@@ -271,7 +197,7 @@ public class TurnipDownloader {
             return false;
         } finally {
             File sourceFiles = getDownloadSubDir(folderName);
-            cleanup(sourceFiles);
+            PGWTools.cleanupFile(sourceFiles);
         }
         return true;
     }
@@ -281,20 +207,4 @@ public class TurnipDownloader {
         return new File(downloadDir, subPath);
     }
 
-    private static void cleanup(File... files) {
-        for (File file : files) {
-            if (file != null && file.exists()) {
-                deleteRecursively(file);
-            }
-        }
-    }
-
-    private static boolean deleteRecursively(File fileOrDir) {
-        if (fileOrDir.isDirectory()) {
-            for (File child : fileOrDir.listFiles()) {
-                deleteRecursively(child);
-            }
-        }
-        return fileOrDir.delete();
-    }
 }
