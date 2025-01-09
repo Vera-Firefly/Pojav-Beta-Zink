@@ -17,8 +17,6 @@
 
 - This repository was forked on [PojavLauncherTeam:PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher)
 
-- This app will be aligned with the Pojav team's main branch update →[v3_openjdk](https://github.com/PojavLauncherTeam/PojavLauncher/tree/v3_openjdk)
-
 - This app adds more renderers and experimental settings
 
 - This is not the official version, it's just a modified,If you don't want to use it, please go to the [PojavLauncherTeam:PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher)

@@ -17,8 +17,6 @@
 
 - 该存储库fork自[PojavLauncherTeam:PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher)
 
-- 这个启动器将与Pojav团队的主分支更新保持一致 →[v3_openjdk](https://github.com/PojavLauncherTeam/PojavLauncher/tree/v3_openjdk)
-
 - 这个启动器增加了更多渲染器和实验性设置
 
 - 这个启动器并非原版,它是魔改版,如果你不想使用它,请到[PojavLauncherTeam:PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher)
