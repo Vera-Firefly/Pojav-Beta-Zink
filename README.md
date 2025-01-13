@@ -137,6 +137,8 @@ Any code change to this repository should be submitted as a pull request. The de
 - [LWJGLX](https://github.com/PojavLauncherTeam/lwjglx) (LWJGL2 API compatibility layer for LWJGL3): unknown license.<br>
 - [Mesa 3D Graphics Library](https://gitlab.freedesktop.org/mesa/mesa): [MIT License](https://docs.mesa3d.org/license.html).
 - [Android-Mesa-Build](https://github.com/Vera-Firefly/android-mesa-build): [GNU GPLv3 License](https://github.com/Vera-Firefly/android-mesa-build/blob/master/LICENSE)
+- [TurnipDriver-CI](https://github.com/Vera-Firefly/TurnipDriver-CI): Unknown License
+- [AdrenoToolsDrivers](https://github.com/K11MCH1/AdrenoToolsDrivers): Unknown License
 - [pro-grade](https://github.com/pro-grade/pro-grade) (Java sandboxing security manager): [Apache License 2.0](https://github.com/pro-grade/pro-grade/blob/master/LICENSE.txt).
 - [bhook](https://github.com/bytedance/bhook) (Used for exit code trapping): [MIT license](https://github.com/bytedance/bhook/blob/main/LICENSE).
 - [libepoxy](https://github.com/anholt/libepoxy): [MIT License](https://github.com/anholt/libepoxy/blob/master/COPYING).

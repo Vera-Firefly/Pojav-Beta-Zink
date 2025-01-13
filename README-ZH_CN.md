@@ -138,6 +138,8 @@ cd ../
 - [LWJGLX](https://github.com/PojavLauncherTeam/lwjglx) (LWJGL2 API compatibility layer for LWJGL3): 未知许可证<br>
 - [Mesa 3D图形库](https://gitlab.freedesktop.org/mesa/mesa): [MIT License](https://docs.mesa3d.org/license.html).
 - [Android-Mesa-Build](https://github.com/Vera-Firefly/android-mesa-build): [GNU GPLv3 License](https://github.com/Vera-Firefly/android-mesa-build/blob/master/LICENSE)
+- [TurnipDriver-CI](https://github.com/Vera-Firefly/TurnipDriver-CI): 未知许可证
+- [AdrenoToolsDrivers](https://github.com/K11MCH1/AdrenoToolsDrivers): 未知许可证
 - [pro-grade](https://github.com/pro-grade/pro-grade) (Java沙盒安全管理器): [Apache License 2.0](https://github.com/pro-grade/pro-grade/blob/master/LICENSE.txt).
 - [bhook](https://github.com/bytedance/bhook) (用于退出代码处理): [MIT license](https://github.com/bytedance/bhook/blob/main/LICENSE).
 - [libepoxy](https://github.com/anholt/libepoxy): [MIT License](https://github.com/anholt/libepoxy/blob/master/COPYING).
