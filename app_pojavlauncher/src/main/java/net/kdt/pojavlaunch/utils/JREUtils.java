@@ -27,6 +27,7 @@ import com.firefly.utils.MesaUtils;
 import com.firefly.utils.PGWTools;
 import com.firefly.utils.TurnipUtils;
 
+import com.movtery.plugins.renderer.RendererPlugin;
 import com.movtery.ui.subassembly.customprofilepath.ProfilePathHome;
 import com.movtery.ui.subassembly.customprofilepath.ProfilePathManager;
 import com.oracle.dalvik.VMLauncher;
@@ -189,6 +190,10 @@ public class JREUtils {
         if (FFmpegPlugin.isAvailable) {
             ldLibraryPath.append(FFmpegPlugin.libraryPath).append(":");
         }
+        RendererPlugin.Renderer customRenderer = RendererPlugin.getSelectedRenderer();
+        if (customRenderer != null) {
+            ldLibraryPath.append(customRenderer.getPath()).append(":");
+        }
         ldLibraryPath.append(jreHome)
                 .append("/").append(Tools.DIRNAME_HOME_JRE)
                 .append("/jli:").append(jreHome).append("/").append(Tools.DIRNAME_HOME_JRE)
@@ -252,6 +257,7 @@ public class JREUtils {
 
     private static void setRendererEnv() throws Throwable {
         Map<String, String> envMap = new ArrayMap<>();
+        String eglName = null;
 
         if (LOCAL_RENDERER.startsWith("opengles2")) {
             envMap.put("LIBGL_ES", "2");
@@ -261,10 +267,32 @@ public class JREUtils {
             envMap.put("LIBGL_NORMALIZE", "1");
         }
 
+        RendererPlugin.Renderer customRenderer = RendererPlugin.getSelectedRenderer();
+        if (customRenderer != null && LOCAL_RENDERER.equals(customRenderer.getId())) {
+            customRenderer.getEnv().forEach(envPair -> {
+                String envKey = envPair.getFirst();
+                String envValue = envPair.getSecond();
+                if (envKey.equals("DLOPEN") || envKey.equals("POJAV_RENDERER")) return;
+                if (envKey.equals("LIB_MESA_NAME")) {
+                    envMap.put(envKey, customRenderer.getPath() + "/" + envValue);
+                } else {
+                    envMap.put(envKey, envValue);
+                }
+            });
+            String customEglName = customRenderer.getEglName();
+            if (customEglName.startsWith("/")) {
+                eglName = customRenderer.getPath() + customEglName;
+            } else {
+                eglName = customEglName;
+            }
+        }
+
         if (LOCAL_RENDERER.equals("opengles3_angle")) {
             envMap.put("LIBGL_ES", "3");
-            envMap.put("POJAVEXEC_EGL", "libEGL_angle.so");
+            eglName = "libEGL_angle.so";
         }
+
+        if (eglName != null) envMap.put("POJAVEXEC_EGL", eglName);
 
         if (!LOCAL_RENDERER.startsWith("opengles")) {
             envMap.put("MESA_GLSL_CACHE_DIR", Tools.DIR_CACHE.getAbsolutePath());
@@ -273,11 +301,13 @@ public class JREUtils {
             envMap.put("allow_glsl_extension_directive_midshader", "true");
         } else envMap.put("POJAV_BETA_RENDERER", LOCAL_RENDERER);
 
-        if (!LOCAL_RENDERER.startsWith("opengles") && !PREF_EXP_SETUP) {
+        if ((!LOCAL_RENDERER.startsWith("opengles") && !PREF_EXP_SETUP) || LOCAL_RENDERER.equals(customRenderer.getId())) {
             switch (LOCAL_RENDERER) {
                 case "vulkan_zink": {
                     envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
                     envMap.put("LOCAL_DRIVER_MODEL", "driver_zink");
+                    envMap.put("MESA_GL_VERSION_OVERRIDE", "4.6");
+                    envMap.put("MESA_GLSL_VERSION_OVERRIDE", "460");
                     envMap.put("mesa_glthread", "true");
                 }
                 break;
@@ -642,9 +672,20 @@ public class JREUtils {
      * @return The name of the loaded library
      */
     public static String loadGraphicsLibrary() {
-        if (LOCAL_RENDERER == null) return null;
+        RendererPlugin.Renderer customRenderer = RendererPlugin.getSelectedRenderer();
+        if (LOCAL_RENDERER == null && customRenderer == null) return null;
         String renderLibrary;
-        if (LOCAL_RENDERER.equals("mesa_3d")) {
+        if (customRenderer != null) {
+            renderLibrary = customRenderer.getGlName();
+            customRenderer.getEnv().forEach(envPair -> {
+                if (envPair.getFirst().equals("DLOPEN")) {
+                    String[] libs = envPair.getSecond().split(",");
+                    for (String lib : libs) {
+                        dlopen(customRenderer.getPath() + "/" + lib);
+                    }
+                }
+            });
+        } else if (LOCAL_RENDERER.equals("mesa_3d")) {
             switch (MESA_LIBS) {
                 case "default":
                     renderLibrary = "libOSMesa_8.so";

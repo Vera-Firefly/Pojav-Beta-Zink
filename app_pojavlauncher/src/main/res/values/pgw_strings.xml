@@ -164,5 +164,7 @@
     <string name="pgw_settings_ctu_dl_downloading">Downloading Turnip Driver</string>
 
     <string name="pgw_settings_choose_download_source">Choose Download Source</string>
+    <string name="generic_unknown">Unknown</string>
+    <string name="setting_renderer_from_plugins">From %s Plugin</string>
 
 </resources>

@@ -50,6 +50,8 @@ import com.fifthLight.touchController.ControllerProxy;
 import com.firefly.utils.MesaUtils;
 import com.firefly.utils.TurnipUtils;
 
+import com.movtery.plugins.renderer.RendererPlugin;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.movtery.ui.subassembly.customprofilepath.ProfilePathHome;
@@ -1256,6 +1258,21 @@ public final class Tools {
             if (rendererlist.contains("panfrost") && PREF_EXP_SETUP) continue;
             rendererIds.add(rendererlist);
             rendererNames.add(defaultRendererNames[i]);
+        }
+        // 渲染器插件
+        if (RendererPlugin.isAvailable()) {
+            RendererPlugin.getRendererList().forEach(renderer -> {
+                if (rendererIds.contains(renderer.getId())) {
+                    //尝试进行覆盖
+                    int rendererIndex = rendererIds.indexOf(renderer.getId());
+                    if (rendererIndex != -1) {
+                        rendererIds.remove(renderer.getId());
+                        rendererNames.remove(rendererIndex);
+                    }
+                }
+                rendererIds.add(renderer.getId());
+                rendererNames.add(renderer.getDes());
+            });
         }
         sCompatibleRenderers = new RenderersList(rendererIds,
                 rendererNames.toArray(new String[0]));
