@@ -46,7 +46,8 @@ object RendererPlugin {
 
         val queryIntentActivities = context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"), PACKAGE_FLAGS)
         queryIntentActivities.forEach {
-            val packageName = it.packageName
+            val activityInfo = it.activityInfo
+            val packageName = activityInfo.packageName
             if (
                 packageName.startsWith("com.movtery.zalithplugin.renderer") ||
                 packageName.startsWith("com.mio.plugin.renderer") ||
