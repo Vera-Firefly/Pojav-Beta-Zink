@@ -301,7 +301,8 @@ public class JREUtils {
             envMap.put("allow_glsl_extension_directive_midshader", "true");
         } else envMap.put("POJAV_BETA_RENDERER", LOCAL_RENDERER);
 
-        if ((!LOCAL_RENDERER.startsWith("opengles") && !PREF_EXP_SETUP) || LOCAL_RENDERER.equals(customRenderer.getId())) {
+        if ((!LOCAL_RENDERER.startsWith("opengles") && !PREF_EXP_SETUP)
+         || (customRenderer != null && LOCAL_RENDERER.equals(customRenderer.getId()))) {
             switch (LOCAL_RENDERER) {
                 case "vulkan_zink": {
                     envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
