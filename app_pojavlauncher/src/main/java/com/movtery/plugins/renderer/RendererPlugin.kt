@@ -1,10 +1,9 @@
 package com.movtery.plugins.renderer
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.os.Build
 
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.R
@@ -42,20 +41,11 @@ object RendererPlugin {
         }
 
     @JvmStatic
-    @SuppressLint("QueryPermissionsNeeded")
     fun initRenderers(context: Context) {
         rendererList.clear()
 
-        val installedPackages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.packageManager.getInstalledPackages(
-                PackageManager.PackageInfoFlags.of(
-                    PACKAGE_FLAGS.toLong()
-                )
-            )
-        } else {
-            context.packageManager.getInstalledPackages(PACKAGE_FLAGS)
-        }
-        installedPackages.forEach {
+        val queryIntentActivities = context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"), PACKAGE_FLAGS)
+        queryIntentActivities.forEach {
             val packageName = it.packageName
             if (
                 packageName.startsWith("com.movtery.zalithplugin.renderer") ||
@@ -63,7 +53,7 @@ object RendererPlugin {
                 packageName.startsWith("com.firefly.pgwplugin.renderer")
             ) {
                 //尝试进行解析渲染器插件
-                parsePlugin(context, it.applicationInfo)
+                parsePlugin(context, it.activityInfo.applicationInfo)
             }
         }
         isInitialized = true
