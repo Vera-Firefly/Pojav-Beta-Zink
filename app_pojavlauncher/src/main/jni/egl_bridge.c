@@ -53,6 +53,8 @@ struct PotatoBridge potatoBridge;
 
 void bigcore_set_affinity();
 
+void* loadTurnipVulkan();
+
 EXTERNAL_API void pojavTerminate() {
     printf("EGLBridge: Terminating\n");
 
@@ -161,10 +163,11 @@ static void set_vulkan_ptr(void* ptr) {
 }
 
 void load_vulkan() {
-    if(getenv("POJAV_ZINK_PREFER_SYSTEM_DRIVER") == NULL && android_get_device_api_level() >= 28) {
-    // the loader does not support below that
+    const char* zinkPreferSystemDriver = getenv("POJAV_ZINK_PREFER_SYSTEM_DRIVER");
+    int deviceApiLevel = android_get_device_api_level();
+    if (zinkPreferSystemDriver == NULL && deviceApiLevel >= 28) {
 #ifdef ADRENO_POSSIBLE
-        void* result = load_turnip_vulkan();
+        void* result = loadTurnipVulkan();
         if (result != NULL)
         {
             printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
@@ -173,10 +176,11 @@ void load_vulkan() {
         }
 #endif
     }
-    printf("OSMDroid: loading vulkan regularly...\n");
-    void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
-    printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);
-    set_vulkan_ptr(vulkan_ptr);
+
+    printf("OSMDroid: Loading Vulkan regularly...\n");
+    void* vulkanPtr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
+    printf("OSMDroid: Loaded Vulkan, ptr=%p\n", vulkanPtr);
+    set_vulkan_ptr(vulkanPtr);
 }
 
 void renderer_load_config() {
