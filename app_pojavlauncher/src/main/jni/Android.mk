@@ -75,7 +75,9 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := linkerhook
-LOCAL_SRC_FILES := driver_helper/hook.c
+LOCAL_SRC_FILES := \
+    linkerhook/linkerhook.cpp \
+    linkerhook/linkerns.c
 LOCAL_LDFLAGS := -z global
 include $(BUILD_SHARED_LIBRARY)
 
