@@ -185,9 +185,6 @@ JNIEXPORT jint JNICALL Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, 
 
    jint res = 0;
 
-    // Save dalvik JNIEnv pointer for JVM launch thread
-    pojav_environ->dalvikJNIEnvPtr_ANDROID = env;
-
     if (argsArray == NULL) {
         LOGE("Args array null, returning");
         //handle error

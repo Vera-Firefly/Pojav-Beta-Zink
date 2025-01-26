@@ -9,9 +9,6 @@
 #include "osm_bridge_xxx1.h"
 #include "renderer_config.h"
 
-void* mbuffer;
-
-
 static const char* osm_LogTag = "OSMBridge";
 static __thread xxx1_osm_render_window_t* currentBundle;
 static char xxx1_no_render_buffer[4];

@@ -60,7 +60,8 @@
         </activity>
         <activity
             android:name=".LauncherActivity"
-            android:label="@string/app_short_name" />
+            android:label="@string/app_short_name"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".ImportControlActivity"
             android:configChanges="keyboard|keyboardHidden"
@@ -112,7 +113,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
-            android:launchMode="standard"
+            android:launchMode="singleTop"
             android:process=":game"
             android:screenOrientation="sensorLandscape" />
 

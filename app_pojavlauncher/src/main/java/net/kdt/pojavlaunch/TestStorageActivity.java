@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 
 import com.movtery.utils.UnpackJRE;
 
+import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.tasks.AsyncAssetManager;
 
 public class TestStorageActivity extends Activity {
@@ -67,7 +68,8 @@ public class TestStorageActivity extends Activity {
             startActivity(new Intent(this, MissingStorageActivity.class));
             return;
         }
-        //Only run them once we get a definitive green light to use storage
+        //Initialize constants (implicitly) and preferences after we confirm that we have storage.
+        LauncherPreferences.loadPreferences(this);
         AsyncAssetManager.unpackComponents(this);
         AsyncAssetManager.unpackSingleFiles(this);
         UnpackJRE.unpackAllJre(getAssets());

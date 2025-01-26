@@ -65,7 +65,7 @@ public class LauncherActivity extends BaseActivity {
 
     private mcAccountSpinner mAccountSpinner;
     private FragmentContainerView mFragmentView;
-    private ImageButton mSettingsButton, mDeleteAccountButton;
+    private ImageButton mSettingsButton;
     private ProgressLayout mProgressLayout;
     private ProgressServiceKeeper mProgressServiceKeeper;
     private ModloaderInstallTracker mInstallTracker;
@@ -106,14 +106,6 @@ public class LauncherActivity extends BaseActivity {
             Tools.backToMainMenu(this);
         }
     };
-
-    /* Listener for account deletion */
-    private final View.OnClickListener mAccountDeleteButtonListener = v -> new AlertDialog.Builder(this)
-            .setMessage(R.string.warning_remove_account)
-            .setPositiveButton(android.R.string.cancel, null)
-            .setNeutralButton(R.string.global_delete, (dialog, which) -> mAccountSpinner.removeCurrentAccount())
-            .show();
-
 
     private final ExtraListener<Boolean> mStartDownloadMinecraft = (key, value) -> {
         mLaunchGame(true);
@@ -172,7 +164,7 @@ public class LauncherActivity extends BaseActivity {
 
     @Override
     protected boolean shouldIgnoreNotch() {
-        return getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT || super.shouldIgnoreNotch();
+        return getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT;
     }
 
     @Override
@@ -210,7 +202,6 @@ public class LauncherActivity extends BaseActivity {
         ProgressKeeper.addTaskCountListener((mProgressServiceKeeper = new ProgressServiceKeeper(this)));
 
         mSettingsButton.setOnClickListener(mSettingButtonListener);
-        mDeleteAccountButton.setOnClickListener(mAccountDeleteButtonListener);
         ProgressKeeper.addTaskCountListener(mProgressLayout);
         ExtraCore.addExtraListener(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.addExtraListener(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
@@ -367,7 +358,6 @@ public class LauncherActivity extends BaseActivity {
     private void bindViews() {
         mFragmentView = findViewById(R.id.container_fragment);
         mSettingsButton = findViewById(R.id.setting_button);
-        mDeleteAccountButton = findViewById(R.id.delete_account_button);
         mAccountSpinner = findViewById(R.id.account_spinner);
         mProgressLayout = findViewById(R.id.progress_layout);
     }

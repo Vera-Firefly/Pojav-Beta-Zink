@@ -155,6 +155,15 @@ public final class Tools {
         }
     }
 
+    public static boolean checkStorageInteractive(Activity context) {
+        if(!Tools.checkStorageRoot(context)) {
+            context.startActivity(new Intent(context, MissingStorageActivity.class));
+            context.finish();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Checks if the Pojav's storage root is accessible and read-writable
      *
@@ -167,22 +176,27 @@ public final class Tools {
         return externalFilesDir != null && Environment.getExternalStorageState(externalFilesDir).equals(Environment.MEDIA_MOUNTED);
     }
 
+    public static void initEarlyConstants(Context ctx) {
+        DIR_CACHE = ctx.getCacheDir();
+        DIR_DATA = ctx.getFilesDir().getParent();
+        MULTIRT_HOME = DIR_DATA + "/runtimes";
+        DIR_ACCOUNT_NEW = DIR_DATA + "/accounts";
+        MESA_DIR = DIR_DATA + "/mesa";
+        TURNIP_DIR = DIR_DATA + "/turnip";
+        NATIVE_LIB_DIR = ctx.getApplicationInfo().nativeLibraryDir;
+    }
+
     /**
      * Since some constant requires the use of the Context object
      * You can call this function to initialize them.
      * Any value (in)directly dependant on DIR_DATA should be set only here.
      */
-    public static void initContextConstants(Context ctx) {
-        DIR_CACHE = ctx.getCacheDir();
-        DIR_DATA = ctx.getFilesDir().getParent();
-        MESA_DIR = DIR_DATA + "/mesa";
-        TURNIP_DIR = DIR_DATA + "/turnip";
+    public static void initStorageConstants(Context ctx) {
+        initEarlyConstants(ctx);
         FILE_PROFILE_PATH = new File(Tools.DIR_DATA, "/profile_path.json");
-        MULTIRT_HOME = DIR_DATA + "/runtimes";
         DIR_GAME_HOME = getPojavStorageRoot(ctx).getAbsolutePath();
         CTRLMAP_PATH = DIR_GAME_HOME + "/controlmap";
         CTRLDEF_FILE = DIR_GAME_HOME + "/controlmap/default.json";
-        NATIVE_LIB_DIR = ctx.getApplicationInfo().nativeLibraryDir;
     }
 
     public static void launchMinecraft(final AppCompatActivity activity, MinecraftAccount minecraftAccount,
@@ -540,7 +554,10 @@ public final class Tools {
     public static void setFullscreen(Activity activity, boolean fullscreen) {
         final View decorView = activity.getWindow().getDecorView();
         View.OnSystemUiVisibilityChangeListener visibilityChangeListener = visibility -> {
-            if (fullscreen) {
+            boolean multiWindowMode = SDK_INT >= 24 && activity.isInMultiWindowMode();
+            // When in multi-window mode, asking for fullscreen makes no sense (cause the launcher runs in a window)
+            // So, ignore the fullscreen setting when activity is in multi window mode
+            if (fullscreen && !multiWindowMode) {
                 if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
                     decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -555,7 +572,8 @@ public final class Tools {
 
         };
         decorView.setOnSystemUiVisibilityChangeListener(visibilityChangeListener);
-        visibilityChangeListener.onSystemUiVisibilityChange(decorView.getSystemUiVisibility()); //call it once since the UI state may not change after the call, so the activity wont become fullscreen
+        //call it once since the UI state may not change after the call, so the activity wont become fullscreen
+        visibilityChangeListener.onSystemUiVisibilityChange(decorView.getSystemUiVisibility());
     }
 
     public static DisplayMetrics currentDisplayMetrics;

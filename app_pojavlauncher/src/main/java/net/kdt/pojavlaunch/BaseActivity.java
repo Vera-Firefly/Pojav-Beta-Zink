@@ -34,10 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!Tools.checkStorageRoot(this)) {
-            startActivity(new Intent(this, MissingStorageActivity.class));
-            finish();
-        }
+        Tools.checkStorageInteractive(this);
     }
 
     @Override

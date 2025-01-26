@@ -157,6 +157,19 @@ JNIEXPORT jint JNICALL Java_net_kdt_pojavlaunch_utils_JREUtils_executeBinary(JNI
 	return result;
 }
 
+JNIEnv* get_attached_env(JavaVM* jvm) {
+    JNIEnv *jvm_env = NULL;
+    jint env_result = (*jvm)->GetEnv(jvm, (void**)&jvm_env, JNI_VERSION_1_4);
+    if(env_result == JNI_EDETACHED) {
+        env_result = (*jvm)->AttachCurrentThread(jvm, &jvm_env, NULL);
+    }
+    if(env_result != JNI_OK) {
+        printf("get_attached_env failed: %i", env_result);
+        return NULL;
+    }
+    return jvm_env;
+}
+
 // METHOD 2
 /*
 JNIEXPORT jint JNICALL Java_net_kdt_pojavlaunch_utils_JREUtils_executeForkedBinary(JNIEnv *env, jclass clazz, jobjectArray cmdArgs) {

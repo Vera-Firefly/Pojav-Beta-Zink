@@ -29,13 +29,20 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_LDLIBS := -ldl -llog -landroid
-LOCAL_MODULE := pojavexec
-LOCAL_SHARED_LIBRARIES := driver_helper bytehook
+LOCAL_MODULE := br_common
+LOCAL_SRC_FILES := \
+    environ/environ.c \
+    ctxbridges/bridge_common.c 
+include $(BUILD_SHARED_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_LDLIBS := -ldl -llog -landroid
+LOCAL_MODULE := bridge_config
+LOCAL_SHARED_LIBRARIES := br_common
 LOCAL_CFLAGS += -g -rdynamic
 
 LOCAL_SRC_FILES := \
-    bigcoreaffinity.c \
-    egl_bridge.c \
     ctxbridges/gl_bridge.c \
     ctxbridges/osm_bridge.c \
     ctxbridges/osm_bridge_xxx1.c \
@@ -44,17 +51,8 @@ LOCAL_SRC_FILES := \
     ctxbridges/egl_loader.c \
     ctxbridges/osmesa_loader.c \
     ctxbridges/swap_interval_no_egl.c \
-    ctxbridges/virgl_bridge.c \
-    environ/environ.c \
-    input_bridge_v3.c \
-    jre_launcher.c \
-    utils.c \
-    stdio_is.c
+    ctxbridges/virgl_bridge.c
 
-ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
-LOCAL_CFLAGS += -DADRENO_POSSIBLE
-LOCAL_LDLIBS += -lEGL -lGLESv2
-endif
 include $(BUILD_SHARED_LIBRARY)
 
 
@@ -74,6 +72,29 @@ include $(BUILD_SHARED_LIBRARY)
 
 
 include $(CLEAR_VARS)
+LOCAL_LDLIBS := -ldl -llog -landroid
+LOCAL_MODULE := pojavexec
+LOCAL_SHARED_LIBRARIES := driver_helper bridge_config br_common
+LOCAL_CFLAGS += -g -rdynamic
+
+LOCAL_SRC_FILES := \
+    pojav/bigcoreaffinity.c \
+    pojav/egl_bridge.c \
+    pojav/input_bridge_v3.c \
+    pojav/jre_launcher.c \
+    pojav/utils.c \
+    pojav/stdio_is.c \
+    hook/java_exec_hooks.c \
+    hook/lwjgl_dlopen_hook.c
+
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+LOCAL_CFLAGS += -DADRENO_POSSIBLE
+LOCAL_LDLIBS += -lEGL -lGLESv2
+endif
+include $(BUILD_SHARED_LIBRARY)
+
+
+include $(CLEAR_VARS)
 LOCAL_MODULE := linkerhook
 LOCAL_SRC_FILES := \
     linkerhook/linkerhook.cpp \
@@ -83,9 +104,17 @@ include $(BUILD_SHARED_LIBRARY)
 
 
 include $(CLEAR_VARS)
+LOCAL_MODULE := exithook
+LOCAL_LDLIBS := -ldl -llog
+LOCAL_SHARED_LIBRARIES := bytehook pojavexec
+LOCAL_SRC_FILES := hook/exit_hook.c
+include $(BUILD_SHARED_LIBRARY)
+
+
+include $(CLEAR_VARS)
 LOCAL_MODULE := pojavexec_awt
 LOCAL_SRC_FILES := \
-    awt_bridge.c
+    pojav/awt_bridge.c
 include $(BUILD_SHARED_LIBRARY)
 
 

@@ -362,6 +362,9 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             // Reload PREF_DEFAULTCTRL_PATH
+            // If the storage root got unmounted/unreadable we won't be able to load the file anyway,
+            // and MissingStorageActivity will be started.
+            if(!Tools.checkStorageRoot(this)) return;
             LauncherPreferences.loadPreferences(getApplicationContext());
             try {
                 mControlLayout.loadLayout(LauncherPreferences.PREF_DEFAULTCTRL_PATH);

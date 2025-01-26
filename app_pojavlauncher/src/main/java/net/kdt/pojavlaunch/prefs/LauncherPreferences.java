@@ -98,8 +98,8 @@ public class LauncherPreferences {
     public static String PREF_GAME_LANGUAGE = ZHTools.getSystemLanguage();
 
     public static void loadPreferences(Context ctx) {
-        //Required for the data folder.
-        Tools.initContextConstants(ctx);
+        //Required for CTRLDEF_FILE and MultiRT
+        Tools.initStorageConstants(ctx);
 
         if (!RendererPlugin.isInitialized()) RendererPlugin.initRenderers(ctx);
 

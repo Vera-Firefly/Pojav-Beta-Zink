@@ -8,8 +8,9 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <bytehook.h>
 #include <environ/environ.h>
+
+#include "stdio_is.h"
 
 //
 // Created by maks on 17.02.21.
@@ -25,7 +26,6 @@ static pthread_t logger;
 static jmethodID logger_onEventLogged;
 static volatile jobject logListener = NULL;
 static int latestlog_fd = -1;
-static _Atomic bool exit_tripped = false;
 
 
 static bool recordBuffer(char* buf, ssize_t len) {
@@ -59,6 +59,7 @@ static void *logger_thread() {
     (*dvm)->DetachCurrentThread(dvm);
     return NULL;
 }
+
 JNIEXPORT void JNICALL
 Java_net_kdt_pojavlaunch_Logger_begin(JNIEnv *env, __attribute((unused)) jclass clazz, jstring logPath) {
     if(latestlog_fd != -1) {
@@ -100,11 +101,6 @@ Java_net_kdt_pojavlaunch_Logger_begin(JNIEnv *env, __attribute((unused)) jclass 
     pthread_detach(logger);
 }
 
-
-
-
-typedef void (*exit_func)(int);
-
 _Noreturn void nominal_exit(int code, bool is_signal) {
     JNIEnv *env;
     jint errorCode = (*exitTrap_jvm)->GetEnv(exitTrap_jvm, (void**)&env, JNI_VERSION_1_6);
@@ -142,48 +138,6 @@ _Noreturn void nominal_exit(int code, bool is_signal) {
     while(1) {}
 }
 
-static void custom_exit(int code) {
-    // If the exit was already done (meaning it is recursive or from a different thread), pass the call through
-    if(exit_tripped) {
-        BYTEHOOK_CALL_PREV(custom_exit, exit_func, code);
-        BYTEHOOK_POP_STACK();
-        return;
-    }
-    exit_tripped = true;
-    // Perform a nominal exit, as we expect.
-    nominal_exit(code, false);
-    BYTEHOOK_POP_STACK();
-}
-
-static void custom_atexit() {
-    // Same as custom_exit, but without the code or the exit passthrough.
-    if(exit_tripped) {
-        return;
-    }
-    exit_tripped = true;
-    nominal_exit(0, false);
-}
-
-JNIEXPORT void JNICALL Java_net_kdt_pojavlaunch_utils_JREUtils_setupExitTrap(JNIEnv *env, __attribute((unused)) jclass clazz, jobject context) {
-    exitTrap_ctx = (*env)->NewGlobalRef(env,context);
-    (*env)->GetJavaVM(env,&exitTrap_jvm);
-    exitTrap_exitClass = (*env)->NewGlobalRef(env,(*env)->FindClass(env,"net/kdt/pojavlaunch/ExitActivity"));
-    exitTrap_staticMethod = (*env)->GetStaticMethodID(env,exitTrap_exitClass,"showExitMessage","(Landroid/content/Context;IZ)V");
-
-    if(bytehook_init(BYTEHOOK_MODE_AUTOMATIC, false) == BYTEHOOK_STATUS_CODE_OK) {
-        bytehook_hook_all(NULL,
-                          "exit",
-                          &custom_exit,
-                          NULL,
-                          NULL);
-    }else {
-        // If we can't hook, register atexit(). This won't report a proper error code,
-        // but it will prevent a SIGSEGV or a SIGABRT from the depths of Dalvik that happens
-        // on exit().
-        atexit(custom_atexit);
-    }
-}
-
 JNIEXPORT void JNICALL Java_net_kdt_pojavlaunch_Logger_appendToLog(JNIEnv *env, __attribute((unused)) jclass clazz, jstring text) {
     jsize appendStringLength = (*env)->GetStringUTFLength(env, text);
     char newChars[appendStringLength+2];
@@ -204,4 +158,13 @@ Java_net_kdt_pojavlaunch_Logger_setLogListener(JNIEnv *env, __attribute((unused)
         logListener = (*env)->NewGlobalRef(env, log_listener);
     }
     if(logListenerLocal != NULL) (*env)->DeleteGlobalRef(env, logListenerLocal);
+}
+
+JNIEXPORT void JNICALL
+Java_net_kdt_pojavlaunch_utils_JREUtils_setupExitMethod(JNIEnv *env, jclass clazz,
+                                                        jobject context) {
+    exitTrap_ctx = (*env)->NewGlobalRef(env,context);
+    (*env)->GetJavaVM(env,&exitTrap_jvm);
+    exitTrap_exitClass = (*env)->NewGlobalRef(env,(*env)->FindClass(env,"net/kdt/pojavlaunch/ExitActivity"));
+    exitTrap_staticMethod = (*env)->GetStaticMethodID(env,exitTrap_exitClass,"showExitMessage","(Landroid/content/Context;IZ)V");
 }

@@ -237,7 +237,7 @@ public class JREUtils {
         if (Tools.deviceHasHangingLinker())
             envMap.put("POJAV_EMUI_ITERATOR_MITIGATE", "1");
         if (FFmpegPlugin.isAvailable)
-            envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
+            envMap.put("POJAV_FFMPEG_PATH", FFmpegPlugin.executablePath);
 
         for (Map.Entry<String, String> env : envMap.entrySet()) {
             Logger.appendToLog("Added custom env: " + env.getKey() + "=" + env.getValue());
@@ -526,7 +526,8 @@ public class JREUtils {
         System.out.println(JVMArgs);
 
         initJavaRuntime(runtimeHome);
-        setupExitTrap(activity.getApplication());
+        JREUtils.setupExitMethod(activity.getApplication());
+        JREUtils.initializeGameExitHook();
         chdir(gameDirectory == null ? ProfilePathHome.getGameHome() : gameDirectory.getAbsolutePath());
         userArgs.add(0, "java"); //argv[0] is the program name according to C standard.
 
@@ -586,7 +587,8 @@ public class JREUtils {
                 "-Dnet.minecraft.clientmodname=" + Tools.APP_NAME,
                 "-Dfml.earlyprogresswindow=false", //Forge 1.14+ workaround
                 "-Dloader.disable_forked_guis=true",
-                "-Dsodium.checks.issue2561=false"
+                "-Dsodium.checks.issue2561=false",
+                "-Djdk.lang.Process.launchMechanism=FORK"
         ));
         if (LauncherPreferences.PREF_ARC_CAPES) {
             overridableArguments.add("-javaagent:" + new File(Tools.DIR_DATA, "arc_dns_injector/arc_dns_injector.jar").getAbsolutePath() + "=23.95.137.176");
@@ -849,21 +851,18 @@ public class JREUtils {
     }
 
     public static native int chdir(String path);
-
     public static native boolean dlopen(String libPath);
-
     public static native void setLdLibraryPath(String ldLibraryPath);
-
     public static native void setupBridgeWindow(Object surface);
-
     public static native void releaseBridgeWindow();
-
-    public static native void setupExitTrap(Context context);
+    public static native void initializeGameExitHook();
+    public static native void setupExitMethod(Context context);
 
     // Obtain AWT screen pixels to render on Android SurfaceView
     public static native int[] renderAWTScreenFrame(/* Object canvas, int width, int height */);
 
     static {
+        System.loadLibrary("exithook");
         System.loadLibrary("pojavexec");
         System.loadLibrary("pojavexec_awt");
     }

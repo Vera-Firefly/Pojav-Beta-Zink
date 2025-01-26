@@ -77,6 +77,17 @@ public class DownloadMirror {
         DownloadUtils.downloadFile(urlInput, outputFile);
     }
 
+    public static long getContentLengthMirrored(int downloadClass, String urlInput) throws IOException {
+        long length = DownloadUtils.getContentLength(getMirrorMapping(downloadClass, urlInput));
+        if(length < 1) {
+            Log.w("DownloadMirror", "Unable to get content length from mirror");
+            Log.i("DownloadMirror", "Falling back to default source");
+            return DownloadUtils.getContentLength(urlInput);
+        }else {
+            return length;
+        }
+    }
+
     /**
      * Check if the current download source is a mirror and not an official source.
      *

@@ -47,10 +47,10 @@ def getVersionName = {
     } else {
         if (TAG_PART_COMMIT.toString().trim() == "") {
             //Fallback no repo
-            return ("fuchsia-" + "${getDate()}")
+            return ("mume-" + "${getDate()}")
         } else {
             // Used by github actions
-            TAG_STRING =  'fuchsia-' + "${getDate()}" + "-" + TAG_PART_COMMIT.toString().trim()
+            TAG_STRING =  'mume-' + "${getDate()}" + "-" + TAG_PART_COMMIT.toString().trim()
         }
     }
 
@@ -280,7 +280,7 @@ dependencies {
     implementation 'com.github.PojavLauncherTeam:portrait-ssp:6c02fd739b'
     implementation 'com.github.Mathias-Boulay:ExtendedView:1.0.0'
     implementation 'com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3'
-    implementation 'com.github.Mathias-Boulay:virtual-joystick-android:2e7aa25e50'
+    implementation 'com.github.Mathias-Boulay:virtual-joystick-android:1.14'
     implementation 'top.fifthlight.touchcontroller:proxy-client:0.0.1'
 
     implementation 'com.github.megatronking.stringfog:xor:5.0.0'

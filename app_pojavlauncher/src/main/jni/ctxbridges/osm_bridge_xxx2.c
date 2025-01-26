@@ -21,8 +21,6 @@ static bool hasCleaned = false;
 static bool hasSetNoRendererBuffer = false;
 static char xxx2_no_render_buffer[4];
 
-void *abuffer;
-
 void setNativeWindowSwapInterval(struct ANativeWindow* nativeWindow, int swapInterval);
 
 void xxx2_osm_set_no_render_buffer(ANativeWindow_Buffer* buf) {

@@ -79,6 +79,11 @@ public class ControlLayout extends FrameLayout {
     }
 
     public void loadLayout(CustomControls controlLayout) {
+        boolean sanitizedModified = false;
+		if(controlLayout != null) {
+			sanitizedModified = LayoutSanitizer.sanitizeLayout(controlLayout);
+		}
+
         if (mActionRow == null) {
             mActionRow = new ActionRow(getContext());
             addView(mActionRow);
@@ -117,7 +122,7 @@ public class ControlLayout extends FrameLayout {
 
         mLayout.scaledAt = LauncherPreferences.PREF_BUTTONSIZE;
 
-        setModified(false);
+        setModified(sanitizedModified);
         mButtons = null;
         getButtonChildren(); // Force refresh
     } // loadLayout
