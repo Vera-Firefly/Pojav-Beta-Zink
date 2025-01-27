@@ -22,7 +22,14 @@ public class ModpackInstaller {
     public static ModLoader installModpack(ModDetail modDetail, int selectedVersion, InstallFunction installFunction) throws IOException {
         String versionUrl = modDetail.versionUrls[selectedVersion];
         String versionHash = modDetail.versionHashes[selectedVersion];
-        String modpackName = modDetail.title.toLowerCase(Locale.ROOT).trim().replace(" ", "_");
+        String modpackName = (modDetail.title.toLowerCase(Locale.ROOT) + " " + modDetail.versionNames[selectedVersion])
+                .trim().replaceAll("[\\\\/:*?\"<>| \\t\\n]", "_" );
+        if (versionHash != null) {
+            modpackName += "_" + versionHash;
+        }
+        if (modpackName.length() > 255){
+            modpackName = modpackName.substring(0,255);
+        }
 
         // Build a new minecraft instance, folder first
 

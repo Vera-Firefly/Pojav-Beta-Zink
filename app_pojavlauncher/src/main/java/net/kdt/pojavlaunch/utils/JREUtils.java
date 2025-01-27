@@ -137,7 +137,7 @@ public class JREUtils {
             public void run() {
                 try {
                     if (logcatPb == null) {
-                        logcatPb = new ProcessBuilder().command("logcat", /* "-G", "1mb", */ "-v", "brief", "-s", "jrelog:I", "LIBGL:I", "NativeInput").redirectErrorStream(true);
+                        logcatPb = new ProcessBuilder().command("logcat", /* "-G", "1mb", */ "-v", "brief", "-s", "jrelog", "LIBGL", "NativeInput").redirectErrorStream(true);
                     }
 
                     Log.i("jrelog-logcat", "Clearing logcat");
@@ -527,7 +527,7 @@ public class JREUtils {
 
         initJavaRuntime(runtimeHome);
         JREUtils.setupExitMethod(activity.getApplication());
-        JREUtils.initializeGameExitHook();
+        JREUtils.initializeHooks();
         chdir(gameDirectory == null ? ProfilePathHome.getGameHome() : gameDirectory.getAbsolutePath());
         userArgs.add(0, "java"); //argv[0] is the program name according to C standard.
 
@@ -855,15 +855,15 @@ public class JREUtils {
     public static native void setLdLibraryPath(String ldLibraryPath);
     public static native void setupBridgeWindow(Object surface);
     public static native void releaseBridgeWindow();
-    public static native void initializeGameExitHook();
+    public static native void initializeHooks();
     public static native void setupExitMethod(Context context);
 
     // Obtain AWT screen pixels to render on Android SurfaceView
     public static native int[] renderAWTScreenFrame(/* Object canvas, int width, int height */);
 
     static {
-        System.loadLibrary("exithook");
-        System.loadLibrary("pojavexec");
+        System.loadLibrary("native_hook");
+        System.loadLibrary("pgw");
         System.loadLibrary("pojavexec_awt");
     }
 }

@@ -323,5 +323,4 @@
     <string name="exception_failed_to_unpack_jre17">Не вдалося установити JRE 17</string>
     <string name="newdl_starting">Зчитування метаданих гри…</string>
     <string name="newdl_downloading_metadata">Завантаження метаданих гри (%s)</string>
-    <string name="newdl_downloading_game_files">Завантаження файлів гри… (%d/%d, %.2f Мб)</string>
 </resources>

@@ -2,15 +2,14 @@
 // Created by maks on 05.01.2025.
 //
 
-#include <jni.h>
+#include "jvm_hooks.h"
 #include <libgen.h>
 #include <string.h>
 #include <stdlib.h>
 #include <dlfcn.h>
 
-#include <environ/environ.h>
-#include <android/log.h>
-#include <pojav/utils.h>
+#include "environ/environ.h"
+#include "pojav/utils.h"
 
 static jint (*orig_ProcessImpl_forkAndExec)(JNIEnv *env, jobject process, jint mode, jbyteArray helperpath, jbyteArray prog, jbyteArray argBlock, jint argc, jbyteArray envBlock, jint envc, jbyteArray dir, jintArray std_fds, jboolean redirectErrorStream);
 

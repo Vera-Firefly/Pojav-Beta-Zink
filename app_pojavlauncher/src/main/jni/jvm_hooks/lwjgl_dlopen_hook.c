@@ -2,15 +2,18 @@
 // Created by maks on 06.01.2025.
 //
 
-#include <android/api-level.h>
-#include <android/log.h>
-#include <jni.h>
+#include "jvm_hooks.h"
 
-#include <environ/environ.h>
+#include <android/api-level.h>
+
+#include "environ/environ.h"
 
 #include <dlfcn.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define TAG __FILE_NAME__
+#include "pojav/log.h"
 
 extern void* maybe_load_vulkan();
 
@@ -46,10 +49,10 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
  * Install the LWJGL dlopen hook. This allows us to mitigate linker bugs and add custom library overrides.
  */
 void installLwjglDlopenHook(JNIEnv *env) {
-    __android_log_print(ANDROID_LOG_INFO, "LwjglLinkerHook", "Installing LWJGL dlopen() hook");
+    LOGI("Installing LWJGL dlopen() hook");
     jclass dynamicLinkLoader = (*env)->FindClass(env, "org/lwjgl/system/linux/DynamicLinkLoader");
     if(dynamicLinkLoader == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "LwjglLinkerHook", "Failed to find the target class");
+        LOGE("Failed to find the target class");
         (*env)->ExceptionClear(env);
         return;
     }
@@ -57,7 +60,7 @@ void installLwjglDlopenHook(JNIEnv *env) {
             {"ndlopen", "(JI)J", &ndlopen_bugfix}
     };
     if((*env)->RegisterNatives(env, dynamicLinkLoader, ndlopenMethod, 1) != 0) {
-        __android_log_print(ANDROID_LOG_ERROR, "LwjglLinkerHook", "Failed to register the hooked method");
+        LOGE("Failed to register the hooked method");
         (*env)->ExceptionClear(env);
     }
 }

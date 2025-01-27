@@ -5,8 +5,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <android/log.h>
 #include <android/native_window.h>
+
+#define TAG __FILE_NAME__
+#include "pojav/log.h"
 
 // Taken from https://android.googlesource.com/platform/frameworks/native/+/41abd67/include/ui/egl/android_natives.h
 // Might be outdated, if you can find a more recent version please add it there
@@ -227,17 +229,17 @@ void setNativeWindowSwapInterval(struct ANativeWindow* nativeWindow, int swapInt
     }
     struct ANativeWindow_real* nativeWindowReal = (struct ANativeWindow_real*) nativeWindow;
     if(nativeWindowReal->common.magic != ANDROID_NATIVE_WINDOW_MAGIC) {
-        __android_log_print(ANDROID_LOG_WARN, "SwapIntervalNoEGL", "ANativeWindow magic does not match. Expected %i, got %i",
+        LOGW("ANativeWindow magic does not match. Expected %i, got %i",
                             ANDROID_NATIVE_WINDOW_MAGIC, nativeWindowReal->common.magic);
         return;
     }
     if(nativeWindowReal->common.version != sizeof(struct ANativeWindow_real)) {
-        __android_log_print(ANDROID_LOG_WARN, "SwapIntervalNoEGL", "ANativeWindow version does not match. Expected %i, got %i",
+        LOGW("ANativeWindow version does not match. Expected %i, got %i",
                             sizeof(struct ANativeWindow_real), nativeWindowReal->common.version);
         return;
     }
     int error;
     if((error = nativeWindowReal->setSwapInterval(nativeWindow, swapInterval)) != 0) {
-        __android_log_print(ANDROID_LOG_WARN, "SwapIntervalNoEGL", "Failed to set swap interval: %s", strerror(-error));
+        LOGW("Failed to set swap interval: %s", strerror(-error));
     }
 }

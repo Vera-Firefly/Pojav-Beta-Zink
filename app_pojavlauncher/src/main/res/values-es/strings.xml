@@ -323,5 +323,4 @@
     <string name="exception_failed_to_unpack_jre17">Error al instalar JRE 17</string>
     <string name="newdl_starting">Leyendo metadatos…</string>
     <string name="newdl_downloading_metadata">Descargando metadatos del juego (%s)</string>
-    <string name="newdl_downloading_game_files">Descargando archivos del juego... (%d/%d, %.2f MB)</string>
 </resources>

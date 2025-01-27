@@ -323,5 +323,4 @@ Um die offizielle Download-Quelle zu verwenden, drücke \"Auf offizielle Seite u
     <string name="exception_failed_to_unpack_jre17">Konnte JRE 17 nicht installieren</string>
     <string name="newdl_starting">Lese Spiel-Metadaten…</string>
     <string name="newdl_downloading_metadata">Lade Spiel-Metadaten herunter (%s)</string>
-    <string name="newdl_downloading_game_files">Lade Spieldateien herunter… (%d/%d, %.2f MB)</string>
 </resources>

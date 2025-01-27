@@ -327,7 +327,8 @@
     <string name="preference_vsync_in_zink_description">允许启动器使用内部系统 API 为 Zink 启用垂直同步，如果您的启动器在系统更新后在使用 Zink 时突然崩溃，请关闭此选项。</string>
     <string name="newdl_starting">正在读取游戏元数据...</string>
     <string name="newdl_downloading_metadata">正在下载游戏元数据 (%s)</string>
-    <string name="newdl_downloading_game_files">正在下载游戏文件... (%d/%d, %.2f MB)</string>
+    <string name="newdl_downloading_game_files">正在下载游戏… (%d/%d, %.2f MB/秒)</string>
+    <string name="newdl_downloading_game_files_size">正在下载游戏… (%.2f/%.2f MB, %.2f MB/秒)</string>
     <string name="cropper_title">选择图像区域</string>
     <string name="cropper_lock_vertical">V. 锁定</string>
     <string name="cropper_lock_horizontal">H. 锁定</string>

@@ -327,5 +327,4 @@ https://cosmetica.cc 를 방문해주세요.
     <string name="exception_failed_to_unpack_jre17">JRE 17 다운로드에 실패하였습니다</string>
     <string name="newdl_starting">Reading game metadata…</string>
     <string name="newdl_downloading_metadata">Downloading game metadata (%s)</string>
-    <string name="newdl_downloading_game_files">Downloading game files… (%d/%d, %.2f MB)</string>
 </resources>

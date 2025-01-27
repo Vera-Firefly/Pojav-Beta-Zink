@@ -47,16 +47,8 @@ object RendererPlugin {
         val queryIntentActivities = context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"), PACKAGE_FLAGS)
         queryIntentActivities.forEach {
             val activityInfo = it.activityInfo
-            val packageName = activityInfo.packageName
-            if (
-                packageName.startsWith("com.movtery.zalithplugin") ||
-                packageName.startsWith("com.mio.plugin") ||
-                packageName.startsWith("com.firefly.pgwplugin") ||
-                packageName.startsWith("com.bzlzhh.plugin")
-            ) {
-                //尝试进行解析渲染器插件
-                parsePlugin(context, it.activityInfo.applicationInfo)
-            }
+            //尝试进行解析渲染器插件
+            parsePlugin(context, it.activityInfo.applicationInfo)
         }
         isInitialized = true
     }
