@@ -24,6 +24,7 @@ extern EGLContext (*eglCreateContext_p) (EGLDisplay dpy, EGLConfig config, EGLCo
 extern EGLBoolean (*eglSwapInterval_p) (EGLDisplay dpy, EGLint interval);
 extern EGLSurface (*eglGetCurrentSurface_p) (EGLint readdraw);
 extern EGLBoolean (*eglQuerySurface_p)(EGLDisplay display, EGLSurface surface, EGLint attribute, EGLint * value);
+extern __eglMustCastToProperFunctionPointerType (*eglGetProcAddress_p) (const char *procname);
 
 void dlsym_EGL();
 

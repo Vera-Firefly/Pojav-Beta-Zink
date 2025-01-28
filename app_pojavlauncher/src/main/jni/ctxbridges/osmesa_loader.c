@@ -6,6 +6,7 @@
 #include <dlfcn.h>
 #include <string.h>
 #include "environ/environ.h"
+#include "br_loader.h"
 #include "osmesa_loader.h"
 #include "renderer_config.h"
 
@@ -44,14 +45,6 @@ char* construct_main_path(const char* mesa_library, const char* mesa_plugin_name
     return main_path;
 }
 
-void* load_symbol(void* handle, const char* symbol_name) {
-    void* symbol = dlsym(handle, symbol_name);
-    if (!symbol)
-        fprintf(stderr, "Error: Failed to load symbol '%s': %s\n", symbol_name, dlerror());
-
-    return symbol;
-}
-
 void dlsym_OSMesa() {
     if (!is_renderer_vulkan()) return;
 
@@ -65,23 +58,24 @@ void dlsym_OSMesa() {
         abort();
     }
 
-    void* dl_handle = dlopen(main_path, RTLD_GLOBAL);
+    void* dl_handle = dlopen(main_path, RTLD_LOCAL | RTLD_LAZY);
     free(main_path);
     if (!dl_handle) {
         fprintf(stderr, "Error: Failed to open library: %s\n", dlerror());
         abort();
     }
 
-    OSMesaMakeCurrent_p = load_symbol(dl_handle, "OSMesaMakeCurrent");
-    OSMesaGetCurrentContext_p = load_symbol(dl_handle, "OSMesaGetCurrentContext");
-    OSMesaCreateContext_p = load_symbol(dl_handle, "OSMesaCreateContext");
-    OSMesaDestroyContext_p = load_symbol(dl_handle, "OSMesaDestroyContext");
-    OSMesaFlushFrontbuffer_p = load_symbol(dl_handle, "OSMesaFlushFrontbuffer");
-    OSMesaPixelStore_p = load_symbol(dl_handle, "OSMesaPixelStore");
-    glGetString_p = load_symbol(dl_handle, "glGetString");
-    glClearColor_p = load_symbol(dl_handle, "glClearColor");
-    glClear_p = load_symbol(dl_handle, "glClear");
-    glFinish_p = load_symbol(dl_handle, "glFinish");
-    glReadPixels_p = load_symbol(dl_handle, "glReadPixels");
-    glReadBuffer_p = load_symbol(dl_handle, "glReadBuffer");
+    OSMesaMakeCurrent_p = OSMGetProcAddress(dl_handle, "OSMesaMakeCurrent");
+    OSMesaGetCurrentContext_p = OSMGetProcAddress(dl_handle, "OSMesaGetCurrentContext");
+    OSMesaCreateContext_p = OSMGetProcAddress(dl_handle, "OSMesaCreateContext");
+    OSMesaDestroyContext_p = OSMGetProcAddress(dl_handle, "OSMesaDestroyContext");
+    OSMesaFlushFrontbuffer_p = OSMGetProcAddress(dl_handle, "OSMesaFlushFrontbuffer");
+    OSMesaPixelStore_p = OSMGetProcAddress(dl_handle, "OSMesaPixelStore");
+    glGetString_p = OSMGetProcAddress(dl_handle, "glGetString");
+    glClearColor_p = OSMGetProcAddress(dl_handle, "glClearColor");
+    glClear_p = OSMGetProcAddress(dl_handle, "glClear");
+    glFinish_p = OSMGetProcAddress(dl_handle, "glFinish");
+    glReadPixels_p = OSMGetProcAddress(dl_handle, "glReadPixels");
+    glReadBuffer_p = OSMGetProcAddress(dl_handle, "glReadBuffer");
+
 }

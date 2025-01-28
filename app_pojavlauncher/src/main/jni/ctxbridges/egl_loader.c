@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <dlfcn.h>
+#include "br_loader.h"
 #include "egl_loader.h"
 
 EGLBoolean (*eglMakeCurrent_p) (EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
@@ -28,26 +29,30 @@ EGLBoolean (*eglQuerySurface_p)(EGLDisplay display, EGLSurface surface, EGLint a
 
 void dlsym_EGL() {
     void* dl_handle = NULL;
-    if(getenv("POJAVEXEC_EGL")) dl_handle = dlopen(getenv("POJAVEXEC_EGL"), RTLD_LAZY);
-    if(dl_handle == NULL) dl_handle = dlopen("libEGL.so", RTLD_LAZY);
-    if(dl_handle == NULL) abort();
-    eglBindAPI_p = dlsym(dl_handle,"eglBindAPI");
-    eglChooseConfig_p = dlsym(dl_handle, "eglChooseConfig");
-    eglCreateContext_p = dlsym(dl_handle, "eglCreateContext");
-    eglCreatePbufferSurface_p = dlsym(dl_handle, "eglCreatePbufferSurface");
-    eglCreateWindowSurface_p = dlsym(dl_handle, "eglCreateWindowSurface");
-    eglDestroyContext_p = dlsym(dl_handle, "eglDestroyContext");
-    eglDestroySurface_p = dlsym(dl_handle, "eglDestroySurface");
-    eglGetConfigAttrib_p = dlsym(dl_handle, "eglGetConfigAttrib");
-    eglGetCurrentContext_p = dlsym(dl_handle, "eglGetCurrentContext");
-    eglGetDisplay_p = dlsym(dl_handle, "eglGetDisplay");
-    eglGetError_p = dlsym(dl_handle, "eglGetError");
-    eglInitialize_p = dlsym(dl_handle, "eglInitialize");
-    eglMakeCurrent_p = dlsym(dl_handle, "eglMakeCurrent");
-    eglSwapBuffers_p = dlsym(dl_handle, "eglSwapBuffers");
-    eglReleaseThread_p = dlsym(dl_handle, "eglReleaseThread");
-    eglSwapInterval_p = dlsym(dl_handle, "eglSwapInterval");
-    eglTerminate_p = dlsym(dl_handle, "eglTerminate");
-    eglGetCurrentSurface_p = dlsym(dl_handle,"eglGetCurrentSurface");
-    eglQuerySurface_p = dlsym(dl_handle, "eglQuerySurface");
+    if (getenv("POJAVEXEC_EGL"))
+        dl_handle = dlopen(getenv("POJAVEXEC_EGL"), RTLD_LOCAL|RTLD_LAZY);
+    if (dl_handle == NULL)
+        dl_handle = dlopen("libEGL.so", RTLD_LOCAL|RTLD_LAZY);
+    if (dl_handle == NULL)
+        abort();
+
+    eglBindAPI_p = GLGetProcAddress(dl_handle, "eglBindAPI");
+    eglChooseConfig_p = GLGetProcAddress(dl_handle, "eglChooseConfig");
+    eglCreateContext_p = GLGetProcAddress(dl_handle, "eglCreateContext");
+    eglCreatePbufferSurface_p = GLGetProcAddress(dl_handle, "eglCreatePbufferSurface");
+    eglCreateWindowSurface_p = GLGetProcAddress(dl_handle, "eglCreateWindowSurface");
+    eglDestroyContext_p = GLGetProcAddress(dl_handle, "eglDestroyContext");
+    eglDestroySurface_p = GLGetProcAddress(dl_handle, "eglDestroySurface");
+    eglGetConfigAttrib_p = GLGetProcAddress(dl_handle, "eglGetConfigAttrib");
+    eglGetCurrentContext_p = GLGetProcAddress(dl_handle, "eglGetCurrentContext");
+    eglGetDisplay_p = GLGetProcAddress(dl_handle, "eglGetDisplay");
+    eglGetError_p = GLGetProcAddress(dl_handle, "eglGetError");
+    eglInitialize_p = GLGetProcAddress(dl_handle, "eglInitialize");
+    eglMakeCurrent_p = GLGetProcAddress(dl_handle, "eglMakeCurrent");
+    eglSwapBuffers_p = GLGetProcAddress(dl_handle, "eglSwapBuffers");
+    eglReleaseThread_p = GLGetProcAddress(dl_handle, "eglReleaseThread");
+    eglSwapInterval_p = GLGetProcAddress(dl_handle, "eglSwapInterval");
+    eglTerminate_p = GLGetProcAddress(dl_handle, "eglTerminate");
+    eglGetCurrentSurface_p = GLGetProcAddress(dl_handle,"eglGetCurrentSurface");
+    eglQuerySurface_p = GLGetProcAddress(dl_handle, "eglQuerySurface");
 }
