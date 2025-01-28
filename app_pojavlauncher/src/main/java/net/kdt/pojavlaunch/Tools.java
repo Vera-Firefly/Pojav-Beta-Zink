@@ -269,7 +269,7 @@ public final class Tools {
         if (Tools.isValidString(minecraftProfile.javaArgs)) args = minecraftProfile.javaArgs;
         FFmpegPlugin.discover(activity);
         ControllerProxy.startProxy();
-        JREUtils.launchJavaVM(activity, runtime, gamedir, javaArgList, args);
+        JREUtils.launchWithUtils(activity, runtime, gamedir, javaArgList, args);
         // If we returned, this means that the JVM exit dialog has been shown and we don't need to be active anymore.
         // We never return otherwise. The process will be killed anyway, and thus we will become inactive
     }
