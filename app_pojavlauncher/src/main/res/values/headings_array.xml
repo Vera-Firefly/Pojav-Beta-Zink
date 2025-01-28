@@ -10,7 +10,6 @@
         <item name="6">@string/mcl_setting_renderer_virgl</item>
         <item name="7">@string/mcl_setting_renderer_freedreno</item>
         <item name="8">@string/mcl_setting_renderer_panfrost</item>
-        <item name="9">Angle</item>
     </string-array>
 
     <string-array name="renderer_values">
@@ -23,7 +22,6 @@
         <item>virglrenderer</item> <!-- virglrenderer with OpenGL ES 3 -->
         <item>freedreno</item> <!-- Gallium Freedreno with Adreno GPU -->
         <item>panfrost</item> <!-- Gallium Panfrost with Mali GPU -->
-        <item>opengles3_angle</item> <!-- Angle with OpenGL ES 3 -->
     </string-array>
 
     <string-array name="menu_customcontrol">
