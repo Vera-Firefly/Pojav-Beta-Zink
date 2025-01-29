@@ -19,7 +19,6 @@ import android.content.Context;
 import android.os.Build;
 import android.system.ErrnoException;
 import android.system.Os;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -49,11 +48,11 @@ import org.lwjgl.glfw.CallbackBridge;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -205,6 +204,14 @@ public class JREUtils {
         LD_LIBRARY_PATH = ldLibraryPath.toString();
     }
 
+    private static void initLdLibraryPath(String jreHome) {
+        File serverFile = new File(jreHome + "/" + Tools.DIRNAME_HOME_JRE + "/server/libjvm.so");
+        jvmLibraryPath = jreHome + "/" + Tools.DIRNAME_HOME_JRE + "/" + (serverFile.exists() ? "server" : "client");
+        Log.d("DynamicLoader", "Base LD_LIBRARY_PATH: " + LD_LIBRARY_PATH);
+        Log.d("DynamicLoader", "Internal LD_LIBRARY_PATH: " + jvmLibraryPath + ":" + LD_LIBRARY_PATH);
+        setLdLibraryPath(jvmLibraryPath + ":" + LD_LIBRARY_PATH);
+    }
+
     private static void setJavaEnv(Map<String, String> envMap, String jreHome) {
         envMap.put("POJAV_NATIVEDIR", NATIVE_LIB_DIR);
         envMap.put("JAVA_HOME", jreHome);
@@ -236,12 +243,6 @@ public class JREUtils {
             envMap.put("POJAV_EMUI_ITERATOR_MITIGATE", "1");
         if (FFmpegPlugin.isAvailable)
             envMap.put("POJAV_FFMPEG_PATH", FFmpegPlugin.executablePath);
-
-        File serverFile = new File(jreHome + "/" + Tools.DIRNAME_HOME_JRE + "/server/libjvm.so");
-        jvmLibraryPath = jreHome + "/" + Tools.DIRNAME_HOME_JRE + "/" + (serverFile.exists() ? "server" : "client");
-        Log.d("DynamicLoader", "Base LD_LIBRARY_PATH: " + LD_LIBRARY_PATH);
-        Log.d("DynamicLoader", "Internal LD_LIBRARY_PATH: " + jvmLibraryPath + ":" + LD_LIBRARY_PATH);
-        setLdLibraryPath(jvmLibraryPath + ":" + LD_LIBRARY_PATH);
     }
 
     private static void setRendererEnv(Map<String, String> envMap) {
@@ -441,7 +442,7 @@ public class JREUtils {
     }
 
     private static void setEnv(String jreHome, final Runtime runtime) throws Throwable {
-        Map<String, String> envMap = new ArrayMap<>();
+        Map<String, String> envMap = new LinkedHashMap<>();
 
         setJavaEnv(envMap, jreHome);
         setCustomEnv(envMap);
@@ -484,7 +485,7 @@ public class JREUtils {
         }
     }
 
-    private static int launchJavaVM(final Activity activity, String runtimeHome, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
+    private static int launchJavaVM(final Activity activity, String runtimeHome, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
         List<String> userArgs = getJavaArgs(activity, runtimeHome, userArgsString);
 
         //Remove arguments that can interfere with the good working of the launcher
@@ -537,20 +538,21 @@ public class JREUtils {
 
     public static void launchWithUtils(final Activity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
         String runtimeHome = MultiRTUtils.getRuntimeHome(runtime.name).getAbsolutePath();
+
         try {
-
+            // Get Library File Location.
             JREUtils.relocateLibPath(runtime, runtimeHome);
-
+            // Initialize Load Dlopen Library Path.
+            initLdLibraryPath(runtimeHome);
+            // Set running environment.
             setEnv(runtimeHome, runtime);
-
+            // Initialize JVM library files.
             initJavaRuntime(runtimeHome);
-
+            // Initialize renderer library files.
             initGraphicAndSoundEngine();
-
-            launchJavaVM(activity, runtimeHome, runtime, gameDirectory, JVMArgs, userArgsString);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            // Launch JVM.
+            launchJavaVM(activity, runtimeHome, gameDirectory, JVMArgs, userArgsString);
         }
     }
 
