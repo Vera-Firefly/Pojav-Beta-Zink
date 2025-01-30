@@ -151,7 +151,7 @@ public class JREUtils {
                     int len;
                     while ((len = p.getInputStream().read(buf)) != -1) {
                         String currStr = new String(buf, 0, len);
-                        // Logger.appendToLog(currStr);
+                        Logger.appendToLog(currStr);
                     }
 
                     if (p.waitFor() != 0) {
