@@ -8,12 +8,9 @@ import android.content.pm.PackageManager
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.R
 
-/**
- * FCL、ZalithLauncher, PGW 等渲染器插件
- * [FCL Renderer Plugin](https://github.com/FCL-Team/FCLRendererPlugin)
- */
 object RendererPlugin {
     data class Renderer(
+        val idName: String,
         val id: String,
         val des: String,
         val glName: String,
@@ -37,7 +34,7 @@ object RendererPlugin {
     @JvmStatic
     val selectedRenderer: Renderer?
         get() {
-            return getRendererList().find { it.id == Tools.LOCAL_RENDERER }
+            return getRendererList().find { it.idName == Tools.LOCAL_RENDERER }
         }
 
     @JvmStatic
@@ -47,7 +44,6 @@ object RendererPlugin {
         val queryIntentActivities = context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"), PACKAGE_FLAGS)
         queryIntentActivities.forEach {
             val activityInfo = it.activityInfo
-            //尝试进行解析渲染器插件
             parsePlugin(context, it.activityInfo.applicationInfo)
         }
         isInitialized = true
@@ -58,9 +54,6 @@ object RendererPlugin {
         return rendererList.isNotEmpty()
     }
 
-    /**
-     * 解析 ZalithLauncher、FCL 渲染器插件
-     */
     private fun parsePlugin(context: Context, info: ApplicationInfo) {
         if (info.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
             val metaData = info.metaData ?: return
@@ -86,6 +79,7 @@ object RendererPlugin {
                 }
                 rendererList.add(
                     Renderer(
+                        info.packageName,
                         pojavEnvPair.find { it.first == "POJAV_RENDERER" }?.second ?: renderer[0],
                         "$des (${
                             context.getString(

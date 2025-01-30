@@ -44,12 +44,12 @@
     </string-array>
 
     <string-array name="driver_model_values">
-        <item>driver_zink</item>
-        <item>driver_virgl</item>
-        <item>driver_panfrost</item>
-        <item>driver_freedreno</item>
-        <item>driver_softpipe</item>
-        <item>driver_llvmpipe</item>
+        <item>gallium_zink</item>
+        <item>gallium_virgl</item>
+        <item>gallium_panfrost</item>
+        <item>gallium_freedreno</item>
+        <item>gallium_softpipe</item>
+        <item>gallium_llvmpipe</item>
     </string-array>
 
     <string-array name="osmesa_mldo">

@@ -19,9 +19,9 @@
         <item>opengles2_vgpu_1</item> <!-- Vgpu renderer with OpenGL ES2 OpenGL 3.0 -->
         <item>mesa_3d</item> <!-- Mesa3D Library -->
         <item>vulkan_zink</item> <!-- Zink renderer with Vulkan OpenGL4.6 -->
-        <item>virglrenderer</item> <!-- virglrenderer with OpenGL ES 3 -->
-        <item>freedreno</item> <!-- Gallium Freedreno with Adreno GPU -->
-        <item>panfrost</item> <!-- Gallium Panfrost with Mali GPU -->
+        <item>gallium_virgl</item> <!-- gallium_virgl with OpenGL ES 3 -->
+        <item>gallium_freedreno</item> <!-- Gallium Freedreno with Adreno GPU -->
+        <item>gallium_panfrost</item> <!-- Gallium Panfrost with Mali GPU -->
     </string-array>
 
     <string-array name="menu_customcontrol">

@@ -138,7 +138,8 @@ _Noreturn void nominal_exit(int code, bool is_signal) {
     while(1) {}
 }
 
-JNIEXPORT void JNICALL Java_net_kdt_pojavlaunch_Logger_appendToLog(JNIEnv *env, __attribute((unused)) jclass clazz, jstring text) {
+JNIEXPORT void JNICALL
+Java_net_kdt_pojavlaunch_Logger_appendToLog(JNIEnv *env, __attribute((unused)) jclass clazz, jstring text) {
     jsize appendStringLength = (*env)->GetStringUTFLength(env, text);
     char newChars[appendStringLength+2];
     (*env)->GetStringUTFRegion(env, text, 0, (*env)->GetStringLength(env, text), newChars);

@@ -232,7 +232,7 @@ int pojavInitOpenGL() {
     if (!strcmp(renderer, "mesa_3d"))
     {
 
-        if (!strcmp(ldrivermodel, "driver_zink"))
+        if (!strcmp(ldrivermodel, "gallium_zink") || !strcmp(ldrivermodel, "vulkan_zink"))
         {
             setenv("GALLIUM_DRIVER", "zink", 1);
             setenv("MESA_LOADER_DRIVER_OVERRIDE", "zink", 1);
@@ -240,7 +240,7 @@ int pojavInitOpenGL() {
             load_vulkan();
         }
 
-        if (!strcmp(ldrivermodel, "driver_virgl"))
+        if (!strcmp(ldrivermodel, "gallium_virgl"))
         {
             pojav_environ->config_renderer = RENDERER_VIRGL;
             setenv("MESA_LOADER_DRIVER_OVERRIDE", "zink", 1);
@@ -253,13 +253,13 @@ int pojavInitOpenGL() {
             return 0;
         }
 
-        if (!strcmp(ldrivermodel, "driver_panfrost"))
+        if (!strcmp(ldrivermodel, "gallium_panfrost"))
         {
             setenv("GALLIUM_DRIVER", "panfrost", 1);
             renderer_load_config();
         }
 
-        if (!strcmp(ldrivermodel, "driver_freedreno"))
+        if (!strcmp(ldrivermodel, "gallium_freedreno"))
         {
             setenv("GALLIUM_DRIVER", "freedreno", 1);
             if (mldo) setenv("MESA_LOADER_DRIVER_OVERRIDE", mldo, 1);
@@ -267,14 +267,14 @@ int pojavInitOpenGL() {
             renderer_load_config();
         }
 
-        if (!strcmp(ldrivermodel, "driver_softpipe"))
+        if (!strcmp(ldrivermodel, "gallium_softpipe"))
         {
             setenv("GALLIUM_DRIVER", "softpipe", 1);
             setenv("LIBGL_ALWAYS_SOFTWARE", "1", 1);
             renderer_load_config();
         }
 
-        if (!strcmp(ldrivermodel, "driver_llvmpipe"))
+        if (!strcmp(ldrivermodel, "gallium_llvmpipe"))
         {
             setenv("GALLIUM_DRIVER", "llvmpipe", 1);
             setenv("LIBGL_ALWAYS_SOFTWARE", "1", 1);

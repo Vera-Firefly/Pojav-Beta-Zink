@@ -168,7 +168,7 @@
             />
 
         <androidx.preference.ListPreference
-            android:defaultValue="driver_zink"
+            android:defaultValue="gallium_zink"
             android:key="CDriverModels"
             android:entries="@array/driver_model"
             android:entryValues="@array/driver_model_values"

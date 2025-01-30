@@ -1280,15 +1280,7 @@ public final class Tools {
         // 渲染器插件
         if (RendererPlugin.isAvailable()) {
             RendererPlugin.getRendererList().forEach(renderer -> {
-                if (rendererIds.contains(renderer.getId())) {
-                    //尝试进行覆盖
-                    int rendererIndex = rendererIds.indexOf(renderer.getId());
-                    if (rendererIndex != -1) {
-                        rendererIds.remove(renderer.getId());
-                        rendererNames.remove(rendererIndex);
-                    }
-                }
-                rendererIds.add(renderer.getId());
+                rendererIds.add(renderer.getIdName());
                 rendererNames.add(renderer.getDes());
             });
         }
