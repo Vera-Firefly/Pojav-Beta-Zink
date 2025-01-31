@@ -23,6 +23,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 
 import com.firefly.feature.TurnipDownloader;
+import com.firefly.feature.MesaDownloader;
 import com.firefly.utils.MesaUtils;
 import com.firefly.utils.PGWTools;
 import com.firefly.utils.TurnipUtils;
@@ -141,7 +142,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
             return true;
         });
         CMesaLibP.setImportButton(getString(R.string.pgw_settings_custom_turnip_creat), view -> handleFileSelection("ADD_MESA"));
-        CMesaLibP.setDownloadButton(getString(R.string.preference_extra_mesa_download), view -> loadMesaList());
+        CMesaLibP.setDownloadButton(getString(R.string.preference_extra_mesa_download), view -> isDownloadMesa());
 
         CTurnipP.setOnPreferenceChangeListener((pre, obj) -> {
             Tools.TURNIP_LIBS = (String) obj;
@@ -444,63 +445,95 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         }
     }
 
-    private void loadMesaList() {
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setMessage(R.string.preference_rendererexp_mesa_download_load)
+    private void isDownloadMesa() {
+        String[] sources = {"Auto", "GitHub", "GHPROXY"};
+        new ListViewDialog.Builder(requireContext())
+            .setTitle(R.string.pgw_settings_choose_download_source)
+            .setCancelable(false)
+            .setItems(sources, (s, i) -> loadMesaList(i))
+            .setCancelListener(R.string.alertdialog_cancel, v -> true)
+            .build()
+            .show();
+    }
+
+    private void loadMesaList(int dls) {
+        CustomDialog dialog = new CustomDialog.Builder(requireContext())
+                .setTitle(getString(R.string.preference_rendererexp_mesa_download_load))
                 .setCancelable(false)
-                .show();
+                .setConfirmListener(R.string.alertdialog_cancel, customView -> {
+                    MesaDownloader.cancelDownload();
+                    return true;
+                })
+                .build();
+        dialog.show();
+        MesaDownloader.initialize(requireContext());
         PojavApplication.sExecutorService.execute(() -> {
-            Set<String> list = MesaUtils.INSTANCE.getMesaList();
+            List<String> list = MesaDownloader.getMesaList(dls);
+            boolean isCancelled = MesaDownloader.isDownloadCancelled();
+            if (isCancelled) return;
             requireActivity().runOnUiThread(() -> {
                 dialog.dismiss();
 
                 if (list == null) {
-                    AlertDialog alertDialog1 = new AlertDialog.Builder(requireActivity())
-                            .setMessage(R.string.preference_rendererexp_mesa_get_fail)
-                            .create();
-                    alertDialog1.show();
+                    CustomDialog Dialog1 = new CustomDialog.Builder(requireActivity())
+                            .setTitle(getString(R.string.preference_rendererexp_mesa_get_fail))
+                            .setConfirmListener(R.string.alertdialog_done, customView -> true)
+                            .build();
+                    Dialog1.show();
                 } else {
-                    final String[] items3 = new String[list.size()];
-                    list.toArray(items3);
-                    // Add List
-                    AlertDialog alertDialog3 = new AlertDialog.Builder(requireActivity())
+                    final String[] items = list.toArray(new String[0]);
+                    ListViewDialog Dialog2 = new ListViewDialog.Builder(requireActivity())
                             .setTitle(R.string.preference_rendererexp_mesa_select_download)
-                            .setItems(items3, (dialogInterface, i) -> {
-                                if (i < 0 || i > items3.length)
+                            .setItems(items, (item, i) -> {
+                                if (i == null || i < 0 || i >= items.length)
                                     return;
-                                dialogInterface.dismiss();
-                                downloadMesa(items3[i]);
+                                downloadMesa(items[i]);
                             })
-                            .create();
-                    alertDialog3.show();
+                            .setCancelListener(R.string.alertdialog_cancel, v -> true)
+                            .build();
+                    Dialog2.show();
                 }
             });
         });
     }
 
     private void downloadMesa(String version) {
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setMessage(R.string.preference_rendererexp_mesa_downloading)
+        CustomDialog dialog = new CustomDialog.Builder(requireContext())
+                .setTitle(getString(R.string.preference_rendererexp_mesa_downloading))
                 .setCancelable(false)
-                .show();
+                .setConfirmListener(R.string.alertdialog_cancel, customView -> {
+                    MesaDownloader.cancelDownload();
+                    return true;
+                })
+                .build();
+        dialog.show();    
+        MesaDownloader.initialize(requireContext());
         PojavApplication.sExecutorService.execute(() -> {
-            boolean data = MesaUtils.INSTANCE.downloadMesa(version);
+            boolean data = MesaDownloader.downloadMesaFile(version);
+            boolean isCancelled = MesaDownloader.isDownloadCancelled();
+            if (isCancelled) return;
             requireActivity().runOnUiThread(() -> {
                 dialog.dismiss();
                 if (data) {
-                    Toast.makeText(requireContext(), R.string.preference_rendererexp_mesa_downloaded, Toast.LENGTH_SHORT)
-                            .show();
+                    boolean success = MesaDownloader.saveMesaFile(version);
+                    if (success) {
+                        Toast.makeText(requireContext(), R.string.preference_rendererexp_mesa_downloaded, Toast.LENGTH_SHORT)
+                                .show();
                     setListPreference(requirePreference("CMesaLibrary", ChooseMesaListPref.class), "CMesaLibrary");
+                    } else {
+                        Toast.makeText(requireContext(), R.string.preference_rendererexp_mesa_download_fail, Toast.LENGTH_SHORT)
+                                .show();
+                    }
                 } else {
-                    AlertDialog alertDialog1 = new AlertDialog.Builder(requireActivity())
-                            .setMessage(R.string.preference_rendererexp_mesa_download_fail)
-                            .create();
-                    alertDialog1.show();
+                    CustomDialog Dialog1 = new CustomDialog.Builder(requireActivity())
+                            .setTitle(getString(R.string.preference_rendererexp_mesa_download_fail))
+                            .setConfirmListener(R.string.alertdialog_done, customView -> true)
+                            .build();
+                    Dialog1.show();
                 }
             });
         });
     }
-
 
     private void isDownloadTurnip() {
         String[] sources = {"Auto", "GitHub", "GHPROXY"};
