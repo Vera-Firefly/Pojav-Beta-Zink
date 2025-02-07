@@ -33,7 +33,7 @@ bool is_renderer_vulkan() {
 
 char* construct_main_path(const char* mesa_name, const char* pojav_native_dir) {
     char* main_path = NULL;
-    if (mesa_name != NULL && strncmp(mesa_plugin_name, "/data", 5) == 0) {
+    if (mesa_name != NULL && strncmp(mesa_name, "/data", 5) == 0) {
         main_path = strdup(mesa_name);
     } else {
         if (asprintf(&main_path, "%s/%s", pojav_native_dir, mesa_library) == -1) {
