@@ -333,7 +333,7 @@ public class JREUtils {
                     // Nothing to do here
                     break;
             }
-            envMap.put("MESA_LIBRARY", loadGraphicsLibrary());
+            envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
         }
 
         if (LOCAL_RENDERER.equals("mesa_3d")) {
@@ -394,7 +394,7 @@ public class JREUtils {
                     envMap.put("PAN_MESA_DEBUG", "trace");
             }
 
-            envMap.put("MESA_LIBRARY", loadGraphicsLibrary());
+            envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
             envMap.put("LOCAL_DRIVER_MODEL", DRIVER_MODEL);
             envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
         }
