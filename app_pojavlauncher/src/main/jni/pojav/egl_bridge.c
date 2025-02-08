@@ -229,6 +229,12 @@ int pojavInitOpenGL() {
         if (pojav_environ->config_bridge == 0) set_gl_bridge_tbl();
     }
 
+    if (!strcmp(renderer, "custom_gallium"))
+    {
+        renderer_load_config();
+        load_vulkan();
+    }
+
     if (!strcmp(renderer, "mesa_3d"))
     {
 
