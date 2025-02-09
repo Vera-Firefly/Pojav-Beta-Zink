@@ -67,6 +67,7 @@ public class JREUtils {
 
     private JREUtils() {}
 
+    private static String PGW_VERSION_CODE = null;
     public static String LD_LIBRARY_PATH;
     public static String jvmLibraryPath;
     private static String glVersion = PREF_MESA_GL_VERSION;
@@ -217,6 +218,10 @@ public class JREUtils {
     }
 
     private static void setJavaEnv(Map<String, String> envMap, String jreHome) {
+        PGW_VERSION_CODE = getString(R.string.base_version_code);
+        if (PGW_VERSION_CODE != null)
+            envMap.put("PGW_VERSION_CODE", PGW_VERSION_CODE);
+
         envMap.put("POJAV_NATIVEDIR", NATIVE_LIB_DIR);
         envMap.put("JAVA_HOME", jreHome);
         envMap.put("HOME", ProfilePathManager.getCurrentPath());
