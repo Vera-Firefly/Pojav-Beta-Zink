@@ -2,6 +2,7 @@ package net.kdt.pojavlaunch.utils;
 
 import static net.kdt.pojavlaunch.Architecture.ARCH_X86;
 import static net.kdt.pojavlaunch.Architecture.is64BitsDevice;
+import static net.kdt.pojavlaunch.Tools.PGW_VERSION_CODE;
 import static net.kdt.pojavlaunch.Tools.CONFIG_BRIDGE;
 import static net.kdt.pojavlaunch.Tools.DRIVER_MODEL;
 import static net.kdt.pojavlaunch.Tools.LOADER_OVERRIDE;
@@ -67,7 +68,6 @@ public class JREUtils {
 
     private JREUtils() {}
 
-    private static String PGW_VERSION_CODE = null;
     public static String LD_LIBRARY_PATH;
     public static String jvmLibraryPath;
     private static String glVersion = PREF_MESA_GL_VERSION;
@@ -218,10 +218,6 @@ public class JREUtils {
     }
 
     private static void setJavaEnv(Map<String, String> envMap, String jreHome) {
-        PGW_VERSION_CODE = getString(R.string.base_version_code);
-        if (PGW_VERSION_CODE != null)
-            envMap.put("PGW_VERSION_CODE", PGW_VERSION_CODE);
-
         envMap.put("POJAV_NATIVEDIR", NATIVE_LIB_DIR);
         envMap.put("JAVA_HOME", jreHome);
         envMap.put("HOME", ProfilePathManager.getCurrentPath());
@@ -232,6 +228,8 @@ public class JREUtils {
         envMap.put("AWTSTUB_WIDTH", Integer.toString(CallbackBridge.windowWidth > 0 ? CallbackBridge.windowWidth : CallbackBridge.physicalWidth));
         envMap.put("AWTSTUB_HEIGHT", Integer.toString(CallbackBridge.windowHeight > 0 ? CallbackBridge.windowHeight : CallbackBridge.physicalHeight));
 
+        if (PGW_VERSION_CODE != null)
+            envMap.put("PGW_VERSION_CODE", PGW_VERSION_CODE);
         if (Tools.CONFIG_BRIDGE != null)
             envMap.put("POJAV_CONFIG_BRIDGE", CONFIG_BRIDGE);
         if (PREF_BIG_CORE_AFFINITY)
