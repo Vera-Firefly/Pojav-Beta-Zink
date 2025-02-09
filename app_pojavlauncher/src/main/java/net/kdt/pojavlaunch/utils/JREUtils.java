@@ -27,6 +27,7 @@ import com.firefly.utils.PGWTools;
 import com.firefly.utils.RendererUtils;
 import com.firefly.utils.TurnipUtils;
 
+import com.movtery.feature.version.VersionInfo;
 import com.movtery.plugins.renderer.RendererPlugin;
 import com.movtery.ui.subassembly.customprofilepath.ProfilePathHome;
 import com.movtery.ui.subassembly.customprofilepath.ProfilePathManager;
@@ -452,7 +453,7 @@ public class JREUtils {
         envMap.put("TURNIP_DIR", folder);
     }
 
-    private static void setEnv(String jreHome, final Runtime runtime, boolean renderer) throws Throwable {
+    private static void setEnv(String jreHome, final Runtime runtime, VersionInfo versionInfo, boolean renderer) throws Throwable {
         PGWTools.onAppendToLog("Env Map");
         Map<String, String> envMap = new LinkedHashMap<>();
 
@@ -461,6 +462,14 @@ public class JREUtils {
 
         if (renderer) {
             checkAndUsedJSPH(envMap, runtime);
+
+            if (versionInfo != null && versionInfo.getLoaderInfo() != null) {
+                for (VersionInfo.LoaderInfo loaderInfo : versionInfo.getLoaderInfo()) {
+                    if (loaderInfo.getLoaderEnvKey() != null) {
+                        envMap.put(loaderInfo.getLoaderEnvKey(), "1");
+                    }
+                }
+            }
 
             if (PGWTools.isAdrenoGPU() && TURNIP_LIBS != null)
                 loadCustomTurnip(envMap);
@@ -552,7 +561,7 @@ public class JREUtils {
         return exitCode;
     }
 
-    public static void launchWithUtils(final Activity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
+    public static void launchWithUtils(final Activity activity, final Runtime runtime, VersionInfo versionInfo, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
         String runtimeHome = MultiRTUtils.getRuntimeHome(runtime.name).getAbsolutePath();
 
         try {
@@ -561,7 +570,7 @@ public class JREUtils {
             // Initialize Load Dlopen Library Path.
             initLdLibraryPath(runtimeHome);
             // Set running environment.
-            setEnv(runtimeHome, runtime, gameDirectory != null);
+            setEnv(runtimeHome, runtime, versionInfo, gameDirectory != null);
             // Initialize JVM library files.
             initJavaRuntime(runtimeHome);
             // Initialize renderer library files.
