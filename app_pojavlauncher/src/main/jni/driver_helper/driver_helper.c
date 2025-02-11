@@ -62,7 +62,7 @@ void* loadTurnipVulkan() {
     if (!checkAdrenoGraphics())
         return NULL;
 
-    const char* native_dir = getenv("TURNIP_DIR");
+    const char* native_dir = getenv("DRIVER_PATH");
     const char* cache_dir = getenv("TMPDIR");
 
     if (!native_dir) 
