@@ -453,8 +453,10 @@ public class JREUtils {
 
     private static void loadCustomTurnip(Map<String, String> envMap) {
         if (PREF_ZINK_PREFER_SYSTEM_DRIVER) return;
-        if (TURNIP_LIBS.equals("default"))
+        if (TURNIP_LIBS.equals("default")) {
             envMap.put("DRIVER_PATH", NATIVE_LIB_DIR);
+            return;
+        }
         String folder = TurnipUtils.INSTANCE.getTurnipDriver(TURNIP_LIBS);
         if (folder == null) return;
         envMap.put("DRIVER_PATH", folder);
