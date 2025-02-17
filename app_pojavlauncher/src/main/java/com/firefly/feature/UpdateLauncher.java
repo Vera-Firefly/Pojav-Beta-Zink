@@ -59,6 +59,11 @@ public class UpdateLauncher {
     }
 
     public void checkForUpdates(boolean ignore) {
+        if (!dir.exists() && !dir.mkdirs()) {
+            handleException(new IOException("Unable to create directory: " + dir.getAbsolutePath()));
+            return;
+        }
+
         executor.execute(() -> {
             JSONObject releaseInfo = fetchReleaseInfo();
             if (releaseInfo != null) handleUpdateCheck(releaseInfo, ignore);
