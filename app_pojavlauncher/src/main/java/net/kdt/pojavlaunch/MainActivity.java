@@ -44,6 +44,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.firefly.utils.ListUtils;
 import com.firefly.utils.PGWTools;
 import com.firefly.utils.ResolutionAdjuster;
 import com.kdt.LoggerView;
@@ -402,8 +403,11 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         if (Tools.CONFIG_BRIDGE == null)
             Tools.CONFIG_BRIDGE = LauncherPreferences.PREF_CONFIG_BRIDGE;
 
+        if (Tools.LIBGL_GL == null)
+            Tools.LIBGL_GL = LauncherPreferences.PREF_LIBGL_GL;
+
         if (!Tools.checkRendererCompatible(this, Tools.LOCAL_RENDERER)) {
-            Tools.RenderersList renderersList = Tools.getCompatibleRenderers(this);
+            ListUtils.RenderersList renderersList = ListUtils.getCompatibleRenderers(this);
             String firstCompatibleRenderer = renderersList.rendererIds.get(0);
             Log.w("runCraft", "Incompatible renderer " + Tools.LOCAL_RENDERER + " will be replaced with " + firstCompatibleRenderer);
             Tools.LOCAL_RENDERER = firstCompatibleRenderer;

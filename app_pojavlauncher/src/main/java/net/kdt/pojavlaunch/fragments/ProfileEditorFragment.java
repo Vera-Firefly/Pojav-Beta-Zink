@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.firefly.utils.ListUtils;
 import com.movtery.ui.subassembly.customprofilepath.ProfilePathManager;
 
 import net.kdt.pojavlaunch.R;
@@ -84,7 +85,7 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         bindViews(view);
 
-        Tools.RenderersList renderersList = Tools.getCompatibleRenderers(view.getContext());
+        ListUtils.RenderersList renderersList = ListUtils.getCompatibleRenderers(view.getContext());
         mRenderNames = renderersList.rendererIds;
         List<String> renderList = new ArrayList<>(renderersList.rendererDisplayNames.length + 1);
         renderList.addAll(Arrays.asList(renderersList.rendererDisplayNames));

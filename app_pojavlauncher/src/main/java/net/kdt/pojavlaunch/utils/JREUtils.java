@@ -9,6 +9,7 @@ import static net.kdt.pojavlaunch.Tools.LOADER_OVERRIDE;
 import static net.kdt.pojavlaunch.Tools.LOCAL_RENDERER;
 import static net.kdt.pojavlaunch.Tools.MESA_LIBS;
 import static net.kdt.pojavlaunch.Tools.TURNIP_LIBS;
+import static net.kdt.pojavlaunch.Tools.LIBGL_GL;
 import static net.kdt.pojavlaunch.Tools.NATIVE_LIB_DIR;
 import static net.kdt.pojavlaunch.Tools.currentDisplayMetrics;
 import static net.kdt.pojavlaunch.Tools.shareLog;
@@ -256,6 +257,9 @@ public class JREUtils {
 
     private static void setRendererEnv(Map<String, String> envMap) {
         String eglName = null;
+
+        if (LIBGL_GL != null && !LIBGL_GL.equals("default"))
+            envMap.put("LIBGL_GL", LIBGL_GL);
 
         if (LOCAL_RENDERER.startsWith("opengles2")) {
             envMap.put("LIBGL_ES", "2");

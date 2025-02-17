@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="libgl_gl">
+        <item name="1">@string/global_default</item>
+        <item name="2">10</item>
+        <item name="3">11</item>
+        <item name="4">12</item>
+        <item name="5">13</item>
+        <item name="6">14</item>
+        <item name="7">15</item>
+        <item name="8">16</item>
+        <item name="9">17</item>
+        <item name="10">18</item>
+        <item name="11">19</item>
+        <item name="12">20</item>
+        <item name="13">21</item>
+        <item name="14">22</item>
+        <item name="15">23</item>
+        <item name="16">24</item>
+        <item name="17">25</item>
+        <item name="18">26</item>
+        <item name="19">27</item>
+        <item name="20">28</item>
+        <item name="21">29</item>
+        <item name="22">30</item>
+        <item name="23">31</item>
+        <item name="24">32</item>
+        <item name="25">33</item>
+        <item name="26">34</item>
+        <item name="27">35</item>
+        <item name="28">36</item>
+        <item name="29">37</item>
+        <item name="30">38</item>
+        <item name="31">39</item>
+        <item name="32">40</item>
+        <item name="33">41</item>
+        <item name="34">42</item>
+        <item name="35">43</item>
+        <item name="36">44</item>
+        <item name="37">45</item>
+        <item name="38">46</item>
+    </string-array>
+
+    <string-array name="libgl_gl_values">
+        <item>default</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+        <item>38</item>
+        <item>39</item>
+        <item>40</item>
+        <item>41</item>
+        <item>42</item>
+        <item>43</item>
+        <item>44</item>
+        <item>45</item>
+        <item>46</item>
+    </string-array>
+
+</resources>

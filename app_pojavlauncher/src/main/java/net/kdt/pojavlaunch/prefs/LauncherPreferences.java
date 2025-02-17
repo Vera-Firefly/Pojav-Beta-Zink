@@ -31,6 +31,7 @@ public class LauncherPreferences {
     public static String PREF_DRIVER_MODEL = "gallium_zink";
     public static String PREF_CONFIG_BRIDGE = "default";
     public static String PREF_LOCAL_LOADER_OVERRIDE = "kgsl";
+    public static String PREF_LIBGL_GL = "default";
 
     public static boolean PREF_VERTYPE_RELEASE = true;
     public static boolean PREF_VERTYPE_SNAPSHOT = false;
@@ -158,6 +159,7 @@ public class LauncherPreferences {
         PREF_TURNIP_LIBS = DEFAULT_PREF.getString("chooseTurnipDriver", "default");
         PREF_DRIVER_MODEL = DEFAULT_PREF.getString("CDriverModels", "gallium_zink");
         PREF_LOCAL_LOADER_OVERRIDE = DEFAULT_PREF.getString("ChooseMldo", "kgsl");
+        PREF_LIBGL_GL = DEFAULT_PREF.getString("CLibglGL", "default");
 
         PREF_MESA_GL_VERSION = DEFAULT_PREF.getString("mesaGLVersion", "4.6");
         PREF_MESA_GLSL_VERSION = DEFAULT_PREF.getString("mesaGLSLVersion", "460");

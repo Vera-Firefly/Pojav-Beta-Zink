@@ -24,6 +24,7 @@ import androidx.preference.Preference.OnPreferenceChangeListener;
 
 import com.firefly.feature.TurnipDownloader;
 import com.firefly.feature.MesaDownloader;
+import com.firefly.utils.ListUtils;
 import com.firefly.utils.MesaUtils;
 import com.firefly.utils.PGWTools;
 import com.firefly.utils.TurnipUtils;
@@ -117,6 +118,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         final ChooseTurnipListPref CTurnipP = requirePreference("chooseTurnipDriver", ChooseTurnipListPref.class);
         final ListPreference CDriverModelP = requirePreference("CDriverModels", ListPreference.class);
         final ListPreference CMesaLDOP = requirePreference("ChooseMldo", ListPreference.class);
+        final ListPreference CLibGLGLP =  requirePreference("CLibglGL", ListPreference.class);
 
         setListPreference(rendererListPref, "renderer");
         setListPreference(configBridgePref, "configBridge");
@@ -124,6 +126,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         setListPreference(CTurnipP, "chooseTurnipDriver");
         setListPreference(CDriverModelP, "CDriverModels");
         setListPreference(CMesaLDOP, "ChooseMldo");
+        setListPreference(CLibGLGLP, "CLibglGL");
 
         rendererListPref.setOnPreferenceChangeListener((pre, obj) -> {
             Tools.LOCAL_RENDERER = (String) obj;
@@ -158,6 +161,11 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
 
         CMesaLDOP.setOnPreferenceChangeListener((pre, obj) -> {
             Tools.LOADER_OVERRIDE = (String) obj;
+            return true;
+        });
+
+        CLibGLGLP.setOnPreferenceChangeListener((pre, obj) -> {
+            Tools.LIBGL_GL = (String) obj;
             return true;
         });
 
@@ -275,10 +283,10 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
     }
 
     private void setListPreference(ListPreference listPreference, String preferenceKey) {
-        Tools.IListAndArry array = null;
+        ListUtils.ListAndArray array = null;
         String value = listPreference.getValue();
         if (preferenceKey.equals("CMesaLibrary")) {
-            array = Tools.getCompatibleCMesaLib(getContext());
+            array = ListUtils.getCompatibleCMesaLib(getContext());
             boolean have = false;
             for (int a = 0; a < array.getList().size(); a++) {
                 if (array.getList().get(a).equalsIgnoreCase(value)) {
@@ -294,29 +302,35 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         }
 
         if (preferenceKey.equals("renderer")) {
-            array = Tools.getCompatibleRenderers(getContext());
+            array = ListUtils.getCompatibleRenderers(getContext());
             Tools.LOCAL_RENDERER = value;
         }
 
         if (preferenceKey.equals("configBridge")) {
-            array = Tools.getCompatibleConfigBridge(getContext());
+            array = ListUtils.getCompatibleConfigBridge(getContext());
             Tools.CONFIG_BRIDGE = value;
         }
 
         if (preferenceKey.equals("CDriverModels")) {
-            array = Tools.getCompatibleCDriverModel(getContext());
+            array = ListUtils.getCompatibleCDriverModel(getContext());
             Tools.DRIVER_MODEL = value;
         }
 
         if (preferenceKey.equals("ChooseMldo")) {
-            array = Tools.getCompatibleCMesaLDO(getContext());
+            array = ListUtils.getCompatibleCMesaLDO(getContext());
             Tools.LOADER_OVERRIDE = value;
         }
 
         if (preferenceKey.equals("chooseTurnipDriver")) {
-            array = Tools.getCompatibleCTurnipDriver(getContext());
+            array = ListUtils.getCompatibleCTurnipDriver(getContext());
             Tools.TURNIP_LIBS = value;
         }
+
+        if (preferenceKey.equals("CLibglGL")) {
+            array = ListUtils.getCompatibleLibGLGL(getContext());
+            Tools.LIBGL_GL = value;
+        }
+
         listPreference.setEntries(array.getArray());
         listPreference.setEntryValues(array.getList().toArray(new String[0]));
     }

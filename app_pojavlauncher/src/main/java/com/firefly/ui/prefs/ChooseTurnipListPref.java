@@ -16,6 +16,7 @@ import androidx.preference.ListPreference;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import com.firefly.ui.dialog.CustomDialog;
+import com.firefly.utils.ListUtils;
 import com.firefly.utils.TurnipUtils;
 
 import java.util.Arrays;
@@ -152,7 +153,7 @@ public class ChooseTurnipListPref extends ListPreference {
     }
 
     private void setEntriesAndValues() {
-        Tools.IListAndArry array = Tools.getCompatibleCTurnipDriver(getContext());
+        ListUtils.ListAndArray array = ListUtils.getCompatibleCTurnipDriver(getContext());
         setEntries(array.getArray());
         setEntryValues(array.getList().toArray(new String[0]));
         String currentValue = getValue();
