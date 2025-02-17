@@ -147,6 +147,7 @@
     <string name="pgw_settings_updatelauncher_install">Install</string>
     <string name="pgw_settings_updatelauncher_install_prompt_title">Install Update</string>
     <string name="pgw_settings_updatelauncher_install_prompt_message">A new version has been downloaded at %s. Do you want to install it?</string>
+    <string name="pgw_settings_updatelauncher_re_download">Re-download</string>
     <!-- Custom Turnip Driver -->
     <string name="pgw_settings_custom_turnip_creat">Add</string>
     <string name="pgw_settings_ctu_version_name">Enter Version Name</string>

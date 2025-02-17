@@ -175,6 +175,7 @@
     <string name="pgw_settings_updatelauncher_install">安装</string>
     <string name="pgw_settings_updatelauncher_install_prompt_title">安装更新</string>
     <string name="pgw_settings_updatelauncher_install_prompt_message">有新的版本已经下载到 %s. 你要安装它吗？</string>
+    <string name="pgw_settings_updatelauncher_re_download">重新下载</string>
     <!-- 自定义 Turnip 驱动 -->
     <string name="pgw_settings_custom_turnip_creat">添加</string>
     <string name="pgw_settings_ctu_version_name">输入版本名称</string>
