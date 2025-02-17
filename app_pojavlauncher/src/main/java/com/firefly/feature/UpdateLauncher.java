@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.core.content.FileProvider;
 
 import com.firefly.ui.dialog.CustomDialog;
+import com.firefly.utils.PGWTools;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
@@ -53,7 +54,7 @@ public class UpdateLauncher {
 
     public UpdateLauncher(Context context) {
         this.context = context;
-        this.dir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        this.dir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "Launcher");
         this.localVersionCode = getLocalVersionCode();
     }
 
@@ -242,6 +243,10 @@ public class UpdateLauncher {
                 installApk(apkFile);
                 return true;
             })
+            .setButton1Listener(context.getString(R.string.pgw_settings_updatelauncher_re_download), costomView -> {
+                reDownloadApk();
+                return true;
+            })
             .setCancelListener(R.string.alertdialog_cancel, customView -> true)
             .setCancelable(false)
             .build()
@@ -312,9 +317,19 @@ public class UpdateLauncher {
                 installApk(apkFile);
                 return true;
             })
+            .setButton1Listener(context.getString(R.string.pgw_settings_updatelauncher_re_download), costomView -> {
+                reDownloadApk();
+                return true;
+            })
             .setCancelListener(R.string.alertdialog_cancel, customView -> true)
             .setCancelable(false)
             .build()
             .show();
     }
+
+    private void reDownloadApk() {
+        PGWTools.cleanupFile(dir);
+        checkForUpdates(true);
+    }
+
 }

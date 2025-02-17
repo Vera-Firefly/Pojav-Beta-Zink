@@ -280,6 +280,8 @@ public class JREUtils {
                     }
                 } else if (envKey.equals("LIB_MESA_NAME")) {
                     envMap.put(envKey, customRenderer.getPath() + "/" + envValue);
+                } else if (envKey.equals("MESA_LIBRARY")) {
+                    envMap.put(envKey, customRenderer.getPath() + "/" + envValue);
                 } else {
                     envMap.put(envKey, envValue);
                 }
