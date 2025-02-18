@@ -258,15 +258,16 @@ public class JREUtils {
     private static void setRendererEnv(Map<String, String> envMap) {
         String eglName = null;
 
-        if (LIBGL_GL != null && !LIBGL_GL.equals("default"))
-            envMap.put("LIBGL_GL", LIBGL_GL);
-
-        if (LOCAL_RENDERER.startsWith("opengles2")) {
+        if (LOCAL_RENDERER.startsWith("opengles2"))
+        {
             envMap.put("LIBGL_ES", "2");
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NOERROR", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NORMALIZE", "1");
+
+            if (LIBGL_GL != null && !LIBGL_GL.equals("default"))
+                envMap.put("LIBGL_GL", LIBGL_GL);
         }
 
         RendererPlugin.Renderer customRenderer = RendererPlugin.getSelectedRenderer();
