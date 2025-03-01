@@ -242,6 +242,7 @@ int pojavInitOpenGL() {
         {
             setenv("GALLIUM_DRIVER", "zink", 1);
             setenv("MESA_LOADER_DRIVER_OVERRIDE", "zink", 1);
+            setenv("mesa_glthread", "true", 1);
             renderer_load_config();
             load_vulkan();
         }
