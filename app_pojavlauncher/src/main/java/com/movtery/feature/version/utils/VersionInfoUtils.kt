@@ -10,7 +10,7 @@ import java.io.File
 
 class VersionInfoUtils {
     companion object {
-        private val VERSION_PATTERN = """(\d+\.\d+\.\d+|\d{2}w\d{2}[a-z])"""
+        private const val VERSION_PATTERN = """(\d+\.\d+\.\d+|\d{2}w\d{2}[a-z])"""
 
         // "1.20.4-OptiFine_HD_U_I7_pre3"       -> 1.20.4
         // "1.21.3-OptiFine_HD_U_J2_pre6"       -> 1.21.3
@@ -46,7 +46,7 @@ class VersionInfoUtils {
         )
 
         /**
-         * 在版本的json文件中，找到版本信息，识别其是否有id这个键
+         * 在版本的json文件中，找到版本信息
          * @return 版本号、ModLoader信息
          */
         @JvmStatic
@@ -145,18 +145,7 @@ class VersionInfoUtils {
                 }
             }
 
-            val mainClass = versionJson.get("mainClass")?.asString ?: ""
-            val tweakers = versionJson.getAsJsonObject("arguments")
-                ?.getAsJsonArray("game")
-                ?.mapNotNull { it.asJsonPrimitive?.asString }
-
-            return when {
-                mainClass.startsWith("net.fabricmc") -> VersionInfo.LoaderInfo("Fabric", "unknown")
-                mainClass.startsWith("cpw.mods") -> VersionInfo.LoaderInfo("Forge", "unknown")
-                mainClass.startsWith("net.neoforged") -> VersionInfo.LoaderInfo("NeoForge", "unknown")
-                tweakers?.any { it.contains("OptiFineTweaker") } == true -> VersionInfo.LoaderInfo("OptiFine", "unknown")
-                else -> null
-            }
+            return null
         }
 
         /**
