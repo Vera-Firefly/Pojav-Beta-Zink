@@ -332,7 +332,7 @@ public final class Tools {
     public static void getCacioJavaArgs(List<String> javaArgList, Runtime runtime) {
         boolean isCacio10 = runtime.javaVersion == 8;
         boolean isCacio11 = runtime.javaVersion == 11;
-        boolean isCacio18 = (17 <= runtime.javaVersion <= 21);
+        boolean isCacio18 = (runtime.javaVersion >= 17 && runtime.javaVersion <= 21);
         // Caciocavallo config AWT-enabled version
         javaArgList.add("-Djava.awt.headless=false");
         javaArgList.add("-Dcacio.managed.screensize=" + AWTCanvasView.AWT_CANVAS_WIDTH + "x" + AWTCanvasView.AWT_CANVAS_HEIGHT);
