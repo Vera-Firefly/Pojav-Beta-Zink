@@ -369,7 +369,7 @@ public final class Tools {
 
         StringBuilder cacioClasspath = new StringBuilder();
         cacioClasspath.append("-Xbootclasspath/").append(isCacio10 ? "p" : "a");
-        File cacioDir = new File(DIR_GAME_HOME + "/caciocavallo" + (isCacio10 ? "" : isCacio11 ? "11" : isCacio18 ? "17" : "19"));
+        File cacioDir = new File(DIR_GAME_HOME + "/caciocavallo" + (isCacio10 ? "" : isCacio11 ? "11" : isCacio18 ? "18" : "19"));
         File[] cacioFiles = cacioDir.listFiles();
         if (cacioFiles != null) {
             for (File file : cacioFiles) {
