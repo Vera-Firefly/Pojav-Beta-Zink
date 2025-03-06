@@ -265,9 +265,6 @@ public class JREUtils {
             envMap.put("LIBGL_NOERROR", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NORMALIZE", "1");
-
-            if (LIBGL_GL != null && !LIBGL_GL.equals("default"))
-                envMap.put("LIBGL_GL", LIBGL_GL);
         }
 
         RendererPlugin.Renderer customRenderer = RendererPlugin.getSelectedRenderer();
@@ -308,7 +305,11 @@ public class JREUtils {
             envMap.put("force_glsl_extensions_warn", "true");
             envMap.put("allow_higher_compat_version", "true");
             envMap.put("allow_glsl_extension_directive_midshader", "true");
-        } else envMap.put("POJAV_BETA_RENDERER", LOCAL_RENDERER);
+        } else {
+            envMap.put("POJAV_BETA_RENDERER", LOCAL_RENDERER);
+            if (LIBGL_GL != null && !LIBGL_GL.equals("default"))
+                envMap.put("LIBGL_GL", LIBGL_GL);
+        }
 
         if (!LOCAL_RENDERER.startsWith("opengles") && !PREF_EXP_SETUP) {
             switch (LOCAL_RENDERER) {
