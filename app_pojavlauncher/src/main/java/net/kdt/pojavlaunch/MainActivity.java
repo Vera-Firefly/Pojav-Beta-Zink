@@ -400,8 +400,8 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         if (Tools.TURNIP_LIBS == null)
             Tools.TURNIP_LIBS = LauncherPreferences.PREF_TURNIP_LIBS;
 
-        if (Tools.CONFIG_BRIDGE == null)
-            Tools.CONFIG_BRIDGE = LauncherPreferences.PREF_CONFIG_BRIDGE;
+        if (Tools.BRIDGE_CONFIG == null)
+            Tools.BRIDGE_CONFIG = LauncherPreferences.PREF_BRIDGE_CONFIG;
 
         if (Tools.LIBGL_GL == null)
             Tools.LIBGL_GL = LauncherPreferences.PREF_LIBGL_GL;

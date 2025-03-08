@@ -134,7 +134,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         });
 
         configBridgePref.setOnPreferenceChangeListener((pre, obj) -> {
-            Tools.CONFIG_BRIDGE = (String) obj;
+            Tools.BRIDGE_CONFIG = (String) obj;
             return true;
         });
 
@@ -308,7 +308,7 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
 
         if (preferenceKey.equals("configBridge")) {
             array = ListUtils.getCompatibleConfigBridge(getContext());
-            Tools.CONFIG_BRIDGE = value;
+            Tools.BRIDGE_CONFIG = value;
         }
 
         if (preferenceKey.equals("CDriverModels")) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="config_bridge_names">
+    <string-array name="bridge_config_names">
         <item name="1">@string/global_default</item>
         <item name="2">Config 1</item>
         <item name="3">Config 2</item>
@@ -8,7 +8,7 @@
         <!--  <item name="5">Config 4</item> -->
     </string-array>
 
-    <string-array name="config_bridge_values">
+    <string-array name="bridge_config_values">
         <item>default</item>
         <item>xxx1</item>
         <item>xxx2</item>

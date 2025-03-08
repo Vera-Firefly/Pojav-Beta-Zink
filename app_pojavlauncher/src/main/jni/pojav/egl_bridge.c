@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <dlfcn.h>
 
+#include <string.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -78,10 +79,10 @@ EXTERNAL_API void pojavTerminate() {
 }
 
 void ConfigBridgeTbl() {
-    const char* bridge_tbl = getenv("POJAV_CONFIG_BRIDGE");
+    const char* bridge_tbl = getenv("BRIDGE_CONFIG");
     if (bridge_tbl == NULL)
     {
-        pojav_environ->config_bridge = BRIDGE_TBL_DEFAULT;
+        pojav_environ->bridge_config = BRIDGE_TBL_DEFAULT;
         return;
     }
     
@@ -100,7 +101,7 @@ void ConfigBridgeTbl() {
     {
         if (!strcmp(bridge_tbl, bridge_map[i].key))
         {
-            pojav_environ->config_bridge = bridge_map[i].value;
+            pojav_environ->bridge_config = bridge_map[i].value;
             hasSelected = 1;
             break;
         }
@@ -108,15 +109,23 @@ void ConfigBridgeTbl() {
     if (hasSelected == 0)
     {
         printf("Config Bridge: Config not found, using default config\n");
-        pojav_environ->config_bridge = BRIDGE_TBL_DEFAULT;
+        pojav_environ->bridge_config = BRIDGE_TBL_DEFAULT;
     }
+}
+
+JNIEXPORT void JNICALL
+Java_net_kdt_pojavlaunch_utils_JREUtils_setRendererTag(JNIEnv *env, jclass clazz, jstring tag) {
+    const char *RTag = (*env)->GetStringUTFChars(env, tag, 0);
+    pojav_environ->rendererTag = strdup(RTag);
+    printf("Renderer Tag: %s\n", RTag);
+    (*env)->ReleaseStringUTFChars(env, tag, RTag);
 }
 
 JNIEXPORT void JNICALL
 Java_net_kdt_pojavlaunch_utils_JREUtils_setupBridgeWindow(JNIEnv* env, ABI_COMPAT jclass clazz, jobject surface) {
     pojav_environ->pojavWindow = ANativeWindow_fromSurface(env, surface);
 
-    if (pojav_environ->config_bridge != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
+    if (pojav_environ->bridge_config != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
         gl_setup_window();
 
     if (br_setup_window) br_setup_window();
@@ -134,7 +143,7 @@ don't touch the code here
 */
 EXTERNAL_API void* pojavGetCurrentContext() {
 
-    if (pojav_environ->config_bridge != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
+    if (pojav_environ->bridge_config != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
         return (void *)eglGetCurrentContext_p();
 
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
@@ -178,14 +187,14 @@ void load_vulkan() {
 
 void renderer_load_config() {
     ConfigBridgeTbl();
-    if (pojav_environ->config_bridge == 0)
+    if (pojav_environ->bridge_config == 0)
     {
         pojav_environ->config_renderer = RENDERER_VK_ZINK;
         set_osm_bridge_tbl();
         return;
     }
-    printf("Config Bridge: Config = %p\n", pojav_environ->config_bridge);
-    switch (pojav_environ->config_bridge) {
+    printf("Config Bridge: Config = %p\n", pojav_environ->bridge_config);
+    switch (pojav_environ->bridge_config) {
         case BRIDGE_TBL_XXX1: {
             pojav_environ->config_renderer = RENDERER_VK_ZINK_XXX1;
             osm_bridge_xxx1();
@@ -216,7 +225,7 @@ int pojavInitOpenGL() {
         pojav_environ->force_vsync = true;
 
     // NOTE: Override for now.
-    const char *renderer = getenv("POJAV_BETA_RENDERER");
+    const char *renderer = pojav_environ->rendererTag;
     const char *ldrivermodel = getenv("LOCAL_DRIVER_MODEL");
     const char *mldo = getenv("LOCAL_LOADER_OVERRIDE");
 
@@ -226,7 +235,7 @@ int pojavInitOpenGL() {
     {
         ConfigBridgeTbl();
         pojav_environ->config_renderer = RENDERER_GL4ES;
-        if (pojav_environ->config_bridge == 0) set_gl_bridge_tbl();
+        if (pojav_environ->bridge_config == 0) set_gl_bridge_tbl();
     }
 
     if (!strcmp(renderer, "custom_gallium"))
@@ -294,9 +303,9 @@ int pojavInitOpenGL() {
 
     if (pojav_environ->config_renderer == RENDERER_GL4ES)
     {
-        if (pojav_environ->config_bridge != 0)
+        if (pojav_environ->bridge_config != 0)
         {
-            printf("Config Bridge: Config = %p\n", pojav_environ->config_bridge);
+            printf("Config Bridge: Config = %p\n", pojav_environ->bridge_config);
             if (gl_init()) gl_setup_window();
         } else {
             if (br_init()) br_setup_window();
@@ -345,7 +354,7 @@ EXTERNAL_API void pojavSwapBuffers() {
     if (pojav_environ->config_renderer == RENDERER_VK_ZINK
      || pojav_environ->config_renderer == RENDERER_GL4ES)
     {
-        if (pojav_environ->config_bridge != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
+        if (pojav_environ->bridge_config != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
             gl_swap_buffers();
         else br_swap_buffers();
     }
@@ -369,7 +378,7 @@ EXTERNAL_API void pojavMakeCurrent(void* window) {
     if (pojav_environ->config_renderer == RENDERER_VK_ZINK
      || pojav_environ->config_renderer == RENDERER_GL4ES)
     {
-        if (pojav_environ->config_bridge != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
+        if (pojav_environ->bridge_config != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
             gl_make_current((gl_render_window_t*)window);
         else br_make_current((basic_render_window_t*)window);
     }
@@ -392,7 +401,7 @@ EXTERNAL_API void* pojavCreateContext(void* contextSrc) {
     if (pojav_environ->config_renderer == RENDERER_VULKAN)
         return (void *) pojav_environ->pojavWindow;
 
-    if (pojav_environ->config_bridge != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
+    if (pojav_environ->bridge_config != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
         return gl_init_context(contextSrc);
 
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
@@ -468,7 +477,7 @@ EXTERNAL_API void pojavSwapInterval(int interval) {
     if(pojav_environ->config_renderer == RENDERER_VK_ZINK
      || pojav_environ->config_renderer == RENDERER_GL4ES)
     {
-        if (pojav_environ->config_bridge != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
+        if (pojav_environ->bridge_config != 0 && pojav_environ->config_renderer == RENDERER_GL4ES)
             gl_swap_interval(interval);
         else br_swap_interval(interval);
     }

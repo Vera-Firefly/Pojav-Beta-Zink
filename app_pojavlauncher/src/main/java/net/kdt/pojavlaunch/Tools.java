@@ -124,7 +124,7 @@ public final class Tools {
     public static File FILE_PROFILE_PATH;
     public static String MULTIRT_HOME;
     public static String LOCAL_RENDERER = null;
-    public static String CONFIG_BRIDGE;
+    public static String BRIDGE_CONFIG;
     public static int DEVICE_ARCHITECTURE;
     public static final String LAUNCHERPROFILES_RTPREFIX = "pojav://";
 

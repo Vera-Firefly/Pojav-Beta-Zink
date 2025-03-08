@@ -73,7 +73,7 @@ gl_render_window_t* gl_init_context(gl_render_window_t *share) {
 
     {
         EGLBoolean bindResult;
-        if (!strncmp(getenv("POJAV_BETA_RENDERER"), "opengles3_desktopgl", 19))
+        if (!strncmp(pojav_environ->rendererTag, "opengles3_desktopgl", 19))
         {
             printf("EGLBridge: Binding to OpenGL\n");
             bindResult = eglBindAPI_p(EGL_OPENGL_API);
@@ -134,7 +134,7 @@ void gl_make_current(gl_render_window_t* bundle) {
 
     if (pojav_environ->mainWindowBundle == NULL)
     {
-        if (getenv("POJAV_CONFIG_BRIDGE") != NULL) pojav_environ->mainWindowBundle = bundle;
+        if (getenv("BRIDGE_CONFIG") != NULL) pojav_environ->mainWindowBundle = bundle;
         else pojav_environ->mainWindowBundle = (basic_render_window_t*)bundle;
 
         LOGI("Main window bundle is now %p", pojav_environ->mainWindowBundle);
@@ -152,7 +152,7 @@ void gl_make_current(gl_render_window_t* bundle) {
         if (hasSetMainWindow) {
             pojav_environ->mainWindowBundle->newNativeSurface = NULL;
 
-            if (getenv("POJAV_CONFIG_BRIDGE") != NULL) gl_swap_surface(pojav_environ->mainWindowBundle);
+            if (getenv("BRIDGE_CONFIG") != NULL) gl_swap_surface(pojav_environ->mainWindowBundle);
             else gl_swap_surface((gl_render_window_t*)pojav_environ->mainWindowBundle);
 
             pojav_environ->mainWindowBundle = NULL;

@@ -15,6 +15,6 @@ EGLConfig config;
 struct PotatoBridge potatoBridge;
 
 int SpareBuffer() {
-    if (getenv("POJAV_SPARE_FRAME_BUFFER") != NULL) return 1;
+    if (getenv("GL_WORKAROUND_FRAMEBUFFER") != NULL) return 1;
     return 0;
 }

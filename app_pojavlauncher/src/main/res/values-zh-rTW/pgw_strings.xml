@@ -80,7 +80,7 @@
     <string name="preference_category_renderer_experimental_settings">渲染器實驗性設置</string>
     <string name="preference_renderer_setup_title">啟用渲染器實驗性設置</string>
     <string name="preference_renderer_setup">使用更多渲染器特定設置</string>
-    <string name="preference_config_bridge_title">橋接配置</string>
+    <string name="preference_bridge_config_title">橋接配置</string>
     <string name="preference_spare_framebuffer_title">備用幀緩衝區</string>
     <string name="preference_spare_framebuffer">使用第二方案的幀緩衝區，啟動失敗時關閉</string>
     <string name="preference_renderer_setup_extra">渲染器 (額外)</string>

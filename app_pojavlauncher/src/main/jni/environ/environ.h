@@ -33,8 +33,9 @@ typedef void GLFW_invoke_WindowSize_func(void* window, int width, int height);
 struct pojav_environ_s {
     struct ANativeWindow* pojavWindow;
     basic_render_window_t* mainWindowBundle;
+    const char *rendererTag;
     int config_renderer;
-    int config_bridge;
+    int bridge_config;
     bool force_vsync;
     atomic_size_t eventCounter; // Count the number of events to be pumped out
     GLFWInputEvent events[EVENT_WINDOW_SIZE];

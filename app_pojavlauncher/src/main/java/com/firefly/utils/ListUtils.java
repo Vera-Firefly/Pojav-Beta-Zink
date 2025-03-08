@@ -106,8 +106,8 @@ public class ListUtils {
 
     public static ConfigBridgeList getCompatibleConfigBridge(Context context) {
         Resources resources = context.getResources();
-        String[] defaultIds = resources.getStringArray(R.array.config_bridge_values);
-        String[] defaultNames = resources.getStringArray(R.array.config_bridge_names);
+        String[] defaultIds = resources.getStringArray(R.array.bridge_config_values);
+        String[] defaultNames = resources.getStringArray(R.array.bridge_config_names);
         List<String> Ids = new ArrayList<>(defaultIds.length);
         List<String> Names = new ArrayList<>(defaultNames.length);
         for (int i = 0; i < defaultIds.length; i++) {

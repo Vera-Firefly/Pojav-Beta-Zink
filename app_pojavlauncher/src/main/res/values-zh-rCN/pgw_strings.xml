@@ -80,7 +80,7 @@
     <string name="preference_category_renderer_experimental_settings">渲染器实验性设置</string>
     <string name="preference_renderer_setup_title">启用渲染器实验性设置</string>
     <string name="preference_renderer_setup">更多的渲染器特定设置</string>
-    <string name="preference_config_bridge_title">桥接配置</string>
+    <string name="preference_bridge_config_title">桥接配置</string>
     <string name="preference_spare_framebuffer_title">备用帧缓冲区</string>
     <string name="preference_spare_framebuffer">使用第二方案帧缓冲区,如果启动失败,请关闭</string>
     <string name="preference_renderer_setup_extra">渲染器 (拓展)</string>

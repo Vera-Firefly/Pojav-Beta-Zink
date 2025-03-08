@@ -3,7 +3,7 @@ package net.kdt.pojavlaunch.utils;
 import static net.kdt.pojavlaunch.Architecture.ARCH_X86;
 import static net.kdt.pojavlaunch.Architecture.is64BitsDevice;
 import static net.kdt.pojavlaunch.Tools.PGW_VERSION_CODE;
-import static net.kdt.pojavlaunch.Tools.CONFIG_BRIDGE;
+import static net.kdt.pojavlaunch.Tools.BRIDGE_CONFIG;
 import static net.kdt.pojavlaunch.Tools.DRIVER_MODEL;
 import static net.kdt.pojavlaunch.Tools.LOADER_OVERRIDE;
 import static net.kdt.pojavlaunch.Tools.LOCAL_RENDERER;
@@ -233,8 +233,8 @@ public class JREUtils {
             envMap.put("PGW_VERSION_CODE", PGW_VERSION_CODE);
         if (TURNIP_LIBS == null)
             envMap.put("DRIVER_PATH", NATIVE_LIB_DIR);
-        if (Tools.CONFIG_BRIDGE != null)
-            envMap.put("POJAV_CONFIG_BRIDGE", CONFIG_BRIDGE);
+        if (Tools.BRIDGE_CONFIG != null)
+            envMap.put("BRIDGE_CONFIG", BRIDGE_CONFIG);
         if (PREF_BIG_CORE_AFFINITY)
             envMap.put("POJAV_BIG_CORE_AFFINITY", "1");
         if (PREF_DUMP_SHADERS)
@@ -244,9 +244,9 @@ public class JREUtils {
         if (PREF_VSYNC_IN_ZINK)
             envMap.put("POJAV_VSYNC_IN_ZINK", "1");
         if (PREF_EXP_SETUP)
-            envMap.put("POJAV_EXP_SETUP", "1");
-        if (PREF_SPARE_FRAME_BUFFER && !CONFIG_BRIDGE.equals("xxx3"))
-            envMap.put("POJAV_SPARE_FRAME_BUFFER", "1");
+            envMap.put("ALLOW_GL_EXP", "1");
+        if (PREF_SPARE_FRAME_BUFFER && !BRIDGE_CONFIG.equals("xxx3"))
+            envMap.put("GL_WORKAROUND_FRAMEBUFFER", "1");
         if (FIX_Q3_BEHAVIOR)
             envMap.put("FD_DEV_FEATURES", "enable_tp_ubwc_flag_hint=1");
         if (Tools.deviceHasHangingLinker())
@@ -275,9 +275,9 @@ public class JREUtils {
                 if (envKey.equals("DLOPEN")) return;
                 if (envKey.equals("POJAV_RENDERER")) {
                     if (!RendererUtils.isGalliumRenderer(envValue)) {
-                        envMap.put("POJAV_BETA_RENDERER", envValue);
+                        JREUtils.setRendererTag(envValue);
                     } else {
-                        envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
+                        JREUtils.setRendererTag("mesa_3d");
                         envMap.put("LOCAL_DRIVER_MODEL", envValue);
                     }
                 } else if (envKey.equals("LIB_MESA_NAME")) {
@@ -306,7 +306,7 @@ public class JREUtils {
             envMap.put("allow_higher_compat_version", "true");
             envMap.put("allow_glsl_extension_directive_midshader", "true");
         } else {
-            envMap.put("POJAV_BETA_RENDERER", LOCAL_RENDERER);
+            JREUtils.setRendererTag(LOCAL_RENDERER);
             if (LIBGL_GL != null && !LIBGL_GL.equals("default"))
                 envMap.put("LIBGL_GL", LIBGL_GL);
         }
@@ -314,14 +314,14 @@ public class JREUtils {
         if (!LOCAL_RENDERER.startsWith("opengles") && !PREF_EXP_SETUP) {
             switch (LOCAL_RENDERER) {
                 case "vulkan_zink": {
-                    envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
+                    JREUtils.setRendererTag("mesa_3d");
                     envMap.put("LOCAL_DRIVER_MODEL", "gallium_zink");
                     envMap.put("MESA_GL_VERSION_OVERRIDE", "4.6");
                     envMap.put("MESA_GLSL_VERSION_OVERRIDE", "460");
                 }
                 break;
                 case "gallium_virgl": {
-                    envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
+                    JREUtils.setRendererTag("mesa_3d");
                     envMap.put("LOCAL_DRIVER_MODEL", "gallium_virgl");
                     envMap.put("MESA_GL_VERSION_OVERRIDE", "4.3");
                     envMap.put("MESA_GLSL_VERSION_OVERRIDE", "430");
@@ -329,13 +329,13 @@ public class JREUtils {
                 }
                 break;
                 case "gallium_freedreno": {
-                    envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
+                    JREUtils.setRendererTag("mesa_3d");
                     envMap.put("LOCAL_DRIVER_MODEL", "gallium_freedreno");
                     envMap.put("LOCAL_LOADER_OVERRIDE", "kgsl");
                 }
                 break;
                 case "gallium_panfrost": {
-                    envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
+                    JREUtils.setRendererTag("mesa_3d");
                     envMap.put("LOCAL_DRIVER_MODEL", "gallium_panfrost");
                     envMap.put("MESA_DISK_CACHE_SINGLE_FILE", "1");
                     envMap.put("MESA_DISK_CACHE_SINGLE_FILE", "true");
@@ -408,7 +408,7 @@ public class JREUtils {
 
             envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
             envMap.put("LOCAL_DRIVER_MODEL", DRIVER_MODEL);
-            envMap.put("POJAV_BETA_RENDERER", "mesa_3d");
+            JREUtils.setRendererTag("mesa_3d");
         }
 
         if (!envMap.containsKey("LIBGL_ES")) {
@@ -544,7 +544,10 @@ public class JREUtils {
         //Add automatically generated args
         userArgs.add("-Xms" + LauncherPreferences.PREF_RAM_ALLOCATION + "M");
         userArgs.add("-Xmx" + LauncherPreferences.PREF_RAM_ALLOCATION + "M");
-        if (LOCAL_RENDERER != null) userArgs.add("-Dorg.lwjgl.opengl.libname=" + loadGraphicsLibrary());
+        if (LOCAL_RENDERER != null) {
+            userArgs.add("-Dorg.lwjgl.opengl.renderertag=" + LOCAL_RENDERER);
+            userArgs.add("-Dorg.lwjgl.opengl.libname=" + loadGraphicsLibrary());
+        }
 
         // Force LWJGL to use the Freetype library intended for it, instead of using the one
         // that we ship with Java (since it may be older than what's needed)
@@ -880,6 +883,8 @@ public class JREUtils {
             return -3;
         }
     }
+
+    public static native void setRendererTag(String tag);
 
     public static native int chdir(String path);
     public static native boolean dlopen(String libPath);

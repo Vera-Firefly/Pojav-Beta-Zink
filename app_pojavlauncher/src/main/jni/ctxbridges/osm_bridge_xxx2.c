@@ -125,7 +125,7 @@ void xxx2OsmSwapInterval(int interval) {
 }
 
 int xxx2OsmInit() {
-    if (pojav_environ->config_bridge != BRIDGE_TBL_XXX2)
+    if (pojav_environ->bridge_config != BRIDGE_TBL_XXX2)
         return 0;
 
     xxx2_osm = malloc(sizeof(struct xxx2_osm_render_window_t));
