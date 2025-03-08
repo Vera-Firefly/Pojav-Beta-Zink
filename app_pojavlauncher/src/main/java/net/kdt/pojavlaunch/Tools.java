@@ -947,7 +947,10 @@ public final class Tools {
     }
 
     public static void write(String path, String content) throws IOException {
-        File file = new File(path);
+        write(new File(path), content);
+    }
+
+    public static void write(File file, String content) throws IOException {
         FileUtils.ensureParentDirectory(file);
         try (FileOutputStream outStream = new FileOutputStream(file)) {
             IOUtils.write(content, outStream);

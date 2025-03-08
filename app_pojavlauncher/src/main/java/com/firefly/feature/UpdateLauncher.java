@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileOutputStream;	
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -125,7 +124,7 @@ public class UpdateLauncher {
     }
 
     private boolean shouldIgnoreVersion(File ignoreVersionFile, String tagName) throws IOException {
-        String savedIgnoreVersion = readFile(ignoreVersionFile);
+        String savedIgnoreVersion = Tools.read(ignoreVersionFile);
         int savedIgnoreVersionCode = Integer.parseInt(savedIgnoreVersion.replaceAll("[^\\d]", ""));
         int releaseVersionCode = Integer.parseInt(tagName.replaceAll("[^\\d]", ""));
         if (savedIgnoreVersionCode < releaseVersionCode) deleteFileIfExists(ignoreVersionFile);
@@ -133,7 +132,7 @@ public class UpdateLauncher {
     }
 
     private boolean cachedVersionIsValid(File apkVersionFile, String tagName) throws IOException {
-        String savedTagName = readFile(apkVersionFile); 
+        String savedTagName = Tools.read(apkVersionFile);
         int savedVersionCode = Integer.parseInt(savedTagName.replaceAll("[^\\d]", ""));
         int releaseVersionCode = Integer.parseInt(tagName.replaceAll("[^\\d]", ""));
         return savedVersionCode >= releaseVersionCode;
@@ -222,7 +221,7 @@ public class UpdateLauncher {
                     }
                 }
 
-                writeFile(apkVersionFile, tagName);
+                Tools.write(apkVersionFile, tagName);
                 new Handler(Looper.getMainLooper()).post(() -> showDownloadCompleteDialog(apkFile));
             } else {
                 showToast(R.string.pgw_settings_updatelauncher_download_fail);
@@ -279,7 +278,7 @@ public class UpdateLauncher {
     private void saveIgnoreVersion(String tagName) {
         File ignoreVersionFile = new File(dir, IGNORE_VERSION_FILE_NAME);
         try {
-            writeFile(ignoreVersionFile, tagName);
+            Tools.write(ignoreVersionFile, tagName);
         } catch (IOException e) {
             handleException(e);
         }
@@ -304,14 +303,6 @@ public class UpdateLauncher {
 
     private void deleteFileIfExists(File file) {
         if (file.exists()) file.delete();
-    }
-
-    private String readFile(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()));
-    }
-
-    private void writeFile(File file, String content) throws IOException {
-        Files.write(file.toPath(), content.getBytes());
     }
 
     private void showInstallDialog(File apkFile) {
